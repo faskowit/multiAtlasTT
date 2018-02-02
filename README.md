@@ -1,15 +1,19 @@
 # multiAtlasTT
 _Multi-Atlas Transfer Tools for Neuroimaging (maTT)_
 
-Given a completed FreeSurfer _recon-all_ directoy, these scripts can transfer an atlas (.annot file; also called a 'parcellation') in fsaverage space to subject space, in both volume (nifti) and surface (.annot) format. Therefore, using these tools one can obtain multiple parcellations in the subject space (in addition to the Desikan-Killiany and Destrieux parcellations that recon-all usually constructs<sup>1</sup>). These tools use FreeSurfer's spherical registration to transfer the labels from space to space (using the [_mri_label2label_](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_label2label) function). The major part of the label transfer script was written by the [CJNueroLab](https://cjneurolab.org/2016/11/22/hcp-mmp1-0-volumetric-nifti-masks-in-native-structural-space/). 
+Given a completed FreeSurfer _recon-all_ directoy, these scripts can transfer an atlas (.annot file; also called a 'parcellation') in fsaverage space to subject space, in both volume (nifti) and surface (.annot) format. Therefore, using these tools one can obtain multiple parcellations in the subject space (in addition to the Desikan-Killiany and Destrieux parcellations that recon-all usually constructs<sup>1</sup>). These tools use FreeSurfer's spherical registration to transfer the labels from space to space (using the [_mri_label2label_](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_label2label) function). The major part of the label transfer script was written by the [CJNeuroLab](https://cjneurolab.org/2016/11/22/hcp-mmp1-0-volumetric-nifti-masks-in-native-structural-space/). The goal of these tools is to make fitting multiple atlases a piece of cake. Have fun! 
 
 ## Prerequities
 
 * FSL
 * FreeSurfer
 * [easy_lausanne](https://github.com/mattcieslak/easy_lausanne)
+  * meaning you have nibabel and numpy too
+  * Also, easy_lausanne is a great tool that you should check out!
 
 ## Usage
+
+TODO
 
 ## Data Sources
 
@@ -38,6 +42,12 @@ Chicago
 
 Useful reading for considering what parcellation to use:
 > Zalesky, A., Fornito, A., Harding, I. H., Cocchi, L., Yücel, M., Pantelis, C., & Bullmore, E. T. (2010). Whole-brain anatomical networks: does the choice of nodes matter?. Neuroimage, 50(3), 970-983.
+
+> Arslan, S., Ktena, S. I., Makropoulos, A., Robinson, E. C., Rueckert, D., & Parisot, S. (2017). Human brain mapping: a systematic comparison of parcellation methods for the human cerebral cortex. NeuroImage.
+
+Note that the atlases here are not a comprehensive set of the parcellations used in neuroimaging. If you would like to see another parcellation (in fsaverage space) supported here, feel free to post an issue/pull request! 
+
+Also note that fitting a parcellation in the manner used here is not the only method for fitting parcellations to neuroimage data. While these tools warp an 'average' brain to each subject, some methods compute individualized parcellations based on subject-level data. 
 
 <sup>1</sup> These tools transfer the atlas from fsaverage to subject space, wherase FreeSufer _recon-all_ uses _mris_ca_label_ to generative the Desikan and Destrieux parcellations in native space. This tool can be used as part of a pipeline to generate the appropriate gcs files necessary for potentially using the _mris_ca_label_ function
 
