@@ -151,7 +151,7 @@ then
     scriptBaseDir=${PWD}/
 fi
 
-other_scripts="matt_labelTrnsfr.sh matt_remap.py"
+other_scripts="maTT_labelTrnsfr.sh maTT_remap.py"
 for script in ${other_scripts}
 do
 
@@ -364,7 +364,7 @@ do
     echo "${subj}" > ${atlasOutputDir}/temp_list.txt
 
     # this is the mapping script
-    cmd="${scriptBaseDir}/matt_labelTrnsfr.sh \
+    cmd="${scriptBaseDir}/maTT_labelTrnsfr.sh \
             -d ${atlasOutputDir}/labtemp/ \
             -a ${atlas} \
             -L ${atlasOutputDir}/temp_list.txt \
@@ -445,7 +445,7 @@ do
     #  i_file = str(argv[1])
     #  o_file = str(argv[2])
     #  labs_file = str(argv[3])
-    cmd="python2.7 ${scriptBaseDir}/matt_remap.py \
+    cmd="python2.7 ${scriptBaseDir}/maTT_remap.py \
             ${atlasOutputDir}/${atlas}.nii.gz \
             ${atlasOutputDir}/${atlas}_rmap.nii.gz \
             ${atlasOutputDir}/LUT_${atlas}.txt \
