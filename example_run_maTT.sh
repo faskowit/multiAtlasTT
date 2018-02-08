@@ -33,7 +33,7 @@ mkdir -p $outputDir
 
 ####################################################################
 ####################################################################
-#go into the folder where we also want output and setup notes file!
+# go into the folder where we also want output and setup notes file!
 
 cd $outputDir
 OUT=maTT_notes.txt
@@ -54,25 +54,17 @@ touch $OUT
 #                   the label transfer
 
 start=`date +%s`
+
 cmd="${scriptBaseDir}/maTT_main.sh \
         ${inputFSDir} \
         ${outputDir} \
     "
 echo $cmd 
-log $cmd 
 eval $cmd | tee -a ${OUT}
 
 # record how long that took!
 end=`date +%s`
 runtime=$((end-start))
 echo "runtime: $runtime"
-log "runtime: $runtime" >> $OUT
-
-
-
-
-
-
-
 
 
