@@ -14,8 +14,8 @@
 ####################################################################
 # export variables to maTT_main.sh
 
-export atlasBaseDir=${PWD}
-export scriptBaseDir=${PWD}
+export atlasBaseDir=${PWD}/
+export scriptBaseDir=${PWD}/
 # make a list from these options: 
 # nspn500 gordon333 yeo17 hcp-mmp schaefer100-yeo17 
 # schaefer200-yeo17 schaefer400-yeo17 schaefer600-yeo17 schaefer800-yeo17 
@@ -26,17 +26,17 @@ export atlasList="schaefer100-yeo17 schaefer200-yeo17 yeo17"
 ####################################################################
 # subject variables
 
-subj=my_subject
-inputFSDir=/path/to/freesurfer/${subj}/
-outputDir=/output/to/somwhere/${subj}/
-mkdir -p $outputDir
+subj="my_subject"
+inputFSDir="/path/to/freesurfer/${subj}/"
+outputDir="/output/to/somwhere/${subj}/"
+mkdir -p ${outputDir}
 
 ####################################################################
 ####################################################################
 # go into the folder where we also want output and setup notes file!
 
-cd $outputDir
-OUT=maTT_notes.txt
+cd ${outputDir}
+OUT="maTT_notes.txt"
 touch $OUT
 
 ####################################################################
