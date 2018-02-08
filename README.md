@@ -1,4 +1,4 @@
-# multiAtlasTT
+# multiAtlasTT (Beta)
 _Multi-Atlas Transfer Tools for Neuroimaging (maTT)_
 
 Given a completed FreeSurfer _recon-all_ directoy, these scripts can transfer an atlas (.annot file; also called a 'parcellation') in fsaverage space to subject space, in both volume (nifti) and surface (.annot) format. Therefore, using these tools one can obtain multiple parcellations in the subject space (in addition to the Desikan-Killiany and Destrieux parcellations that recon-all usually constructs<sup>1</sup>). The major part of the label transfer script was written by the [CJNeuroLab](https://cjneurolab.org/2016/11/22/hcp-mmp1-0-volumetric-nifti-masks-in-native-structural-space/). The goal of these tools is to make fitting multiple atlases a piece of cake. Have fun! 
@@ -13,7 +13,7 @@ Given a completed FreeSurfer _recon-all_ directoy, these scripts can transfer an
 
 ## Usage
 
-TODO
+See ``example_run_maTT.sh`` for modifiable example scipt
 
 ## Data Sources
 
