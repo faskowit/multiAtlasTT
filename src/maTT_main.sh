@@ -29,15 +29,34 @@ COMMENT
 #
 ####################################################################
 ####################################################################
-#
-# inputFSDir=$1 --> input freesurfer directory
-# outputDir=$2 ---> output directory, will also write temporary 
-#                   files here 
-# refBrain=$3 ----> file to be used as reference when transfering 
-#                   aparc+aseg.mgz to orginal (native) space.
-# numThread=$4 ---> number of parallel processes to use when doing
-#                   the label transfer
-#
+
+help_usage() 
+{
+cat <<helpusagetext
+
+USAGE: ${0} 
+        -d          inputFSDir --> input freesurfer directory
+        -o          outputDir ---> output directory, will also write temporary 
+                        files here 
+        -r (opt)    refBrain ----> file to be used as reference transforming 
+                        aparc+aseg.mgz out of FS conformed space (default=rawavg) 
+        -n (opt)    numThread ---> number of parallel processes to use when doing
+                        the label transfer (default=4)
+helpusagetext
+}
+
+usage() 
+{
+cat <<usagetext
+
+USAGE: ${0} 
+        -d          inputFSDir 
+        -o          outputDir 
+        -r (opt)    refBrain 
+        -n (opt)    numThread 
+usagetext
+}
+
 ####################################################################
 ####################################################################
 # define main function here, and then call it at the end
@@ -45,39 +64,72 @@ COMMENT
 main() 
 {
 
-####################################################################
-####################################################################
-
 start=`date +%s`
 
-#Check the number of arguments. If none are passed, print help and exit.
+####################################################################
+####################################################################
+
+# Check the number of arguments. If none are passed, print help and exit.
 NUMARGS=$#
 if [ $NUMARGS -lt 2 ]; then
 	echo "Not enough args"
-    echo "Usage: $0 (input FreeSurfer dir) (output dir) opt(reference brain) opt(num parallel threads)"
+	usage &>2 
 	exit 1
 fi
 
-####################################################################
-####################################################################
-# handling input
+# read in args
+while getopts "a:b:c:d:e:f:g:hi:j:k:l:m:n:o:p:q:s:r:t:u:v:w:x:y:z:" OPTION
+do
+     case $OPTION in
+		d)
+			inputFSDir=$OPTARG
+			;;
+		o)
+			outputDir=$OPTARG
+			;;
+		r)
+			refBrain=$OPTARG
+			;;
+		n)
+			numThread=$OPTARG
+			;;
+		h) 
+			help_usage >&2
+            exit 1
+      		;;
+		?) # getopts issues an error message
+			usage >&2
+            exit 1
+      		;;
+     esac
+done
 
-inputFSDir=$1
-outputDir=$2
-refBrain=$3
-numThread=$4
+shift "$((OPTIND-1))" # Shift off the options and optional
+
+####################################################################
+####################################################################
+# check user inputs
+
+# if these two variables are empty, return
+if [[ -z ${inputFSDir} ]] || [[ -z ${outputDir} ]]
+then
+    echo "minimun arguments -d and -o not provided"
+	usage >&2
+    exit 1
+fi
 
 # make full path, add forward slash too
 inputFSDir=$(readlink -f ${inputFSDir})/
 outputDir=${outputDir}/
 
-# check inputs
+# check existence of FS directory
 if [[ ! -d ${inputFSDir} ]]
 then 
-    echo "input FS directory does not exits. exiting"
+    echo "input FS directory does not exist. exiting"
     exit 1
 fi
 
+# check reference brain if set
 if [[ -z ${refBrain} ]] || [[ ${refBrain} == 'rawavg' ]]
 then
     refBrain=${inputFSDir}/mri/rawavg.mgz
@@ -87,6 +139,7 @@ then
     exit 1
 fi
 
+# check number threads to use
 if [[ -z ${numThread} ]]
 then 
     N=4
@@ -98,18 +151,22 @@ else
     fi
 fi
 
-####################################################################
-####################################################################
-# setup note-taking
-
+# check if we can make output dir
 mkdir -p ${outputDir}/ || \
-    { echo "could not make output dir. exiting" ; exit 1 ; } 
-subj=$(basename $inputFSDir)
+    { echo "could not make output dir; exiting" ; exit 1 ; } 
+
+####################################################################
+####################################################################
+
+# setup note-taking
 OUT=${outputDir}/notes.txt
 touch $OUT
 
 # also make this a full path
 outputDir=$(readlink -f ${outputDir})/
+
+# set subj variable to fs dir name, as is freesurfer custom
+subj=$(basename $inputFSDir)
 
 ####################################################################
 ####################################################################
@@ -130,7 +187,7 @@ then
     atlasBaseDir=${PWD}/atlas_data/    
     if [[ ! -d ${atlasBaseDir} ]]
     then
-        echo "cannot find the atlas_data. please set and retry"
+        echo "cannot find the atlas_data; please set and retry"
         exit 1
     fi
     echo "will assume this is the right dir: ${atlasBaseDir}"
@@ -157,7 +214,7 @@ do
 
     if [[ ! -e ${PWD}/${script} ]] || [[ ! -e ${scriptBaseDir}/${script} ]]
     then
-        echo "need the other script, ${script} for this to work"
+        echo "need ${script} for this to work; cannot find"
         exit 1
     fi
 done
@@ -203,7 +260,7 @@ mkdir -p ${outputDir}/tmpFsDir/ && \
 # now the input fsDir will be our temporary dir
 inputFSDir=${outputDir}/tmpFsDir/${subj}/
 
-# and this, reset SUJECTS_DIR
+# reset SUJECTS_DIR to the new inputFSDir
 export SUBJECTS_DIR=${outputDir}/tmpFsDir/
 
 # copy over the fsaverage here

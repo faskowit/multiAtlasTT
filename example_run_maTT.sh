@@ -44,20 +44,20 @@ touch $OUT
 # run the script
 
 # script inputs:
-# inputFSDir=$1 --> input freesurfer directory
-# outputDir=$2 ---> output directory, will also write temporary 
+# -d inputFSDir --> input freesurfer directory
+# -o outputDir ---> output directory, will also write temporary 
 #                   files here 
 # optional inputs:
-# refBrain=$3 ----> file to be used as reference when transfering 
+# -r refBrain ----> file to be used as reference when transfering 
 #                   aparc+aseg.mgz to orginal (native) space.
-# numThread=$4 ---> number of parallel processes to use when doing
+# -n numThread ---> number of parallel processes to use when doing
 #                   the label transfer
 
 start=`date +%s`
 
 cmd="${scriptBaseDir}/src/maTT_main.sh \
-        ${inputFSDir} \
-        ${outputDir} \
+        -d ${inputFSDir} \
+        -o ${outputDir} \
     "
 echo $cmd 
 eval $cmd | tee -a ${OUT}
