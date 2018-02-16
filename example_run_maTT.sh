@@ -55,7 +55,7 @@ touch $OUT
 
 start=`date +%s`
 
-cmd="${scriptBaseDir}/maTT_main.sh \
+cmd="${scriptBaseDir}/src/maTT_main.sh \
         ${inputFSDir} \
         ${outputDir} \
     "
