@@ -212,7 +212,7 @@ other_scripts="/src/maTT_labelTrnsfr.sh /src/maTT_remap.py"
 for script in ${other_scripts}
 do
 
-    if [[ ! -e ${PWD}/${script} ]] || [[ ! -e ${scriptBaseDir}/${script} ]]
+    if [[ ! -e ${scriptBaseDir}/${script} ]]
     then
         echo "need ${script} for this to work; cannot find"
         exit 1
