@@ -208,7 +208,7 @@ then
     scriptBaseDir=${PWD}/
 fi
 
-other_scripts="/src/maTT_labelTrnsfr.sh /src/maTT_remap.py"
+other_scripts="/src/maTT_labelTrnsfr.sh /src/maTT_remap.py /src/maTT_funcs.sh"
 for script in ${other_scripts}
 do
 
@@ -218,6 +218,9 @@ do
         exit 1
     fi
 done
+
+# source the funcs
+source ${scriptBaseDir}/src/maTT_funcs.sh
 
 ####################################################################
 ####################################################################
@@ -304,94 +307,19 @@ fi
 if [[ ! -e ${outputDir}/${subj}_subcort_mask.nii.gz ]]
 then
 
-    # initialize the subcort image, should make blank image
-    cmd="${FSLDIR}/bin/fslmaths \
-            ${outputDir}/${subj}_aparc+aseg.nii.gz \
-            -thr 0 -uthr 0 -bin \
-            ${outputDir}/${subj}_subcort_mask.nii.gz \
-            -odt int \
-        "
-    echo $cmd #state the command
-    log $cmd >> $OUT
-    eval $cmd #execute the command
+    # function inputs:
+    #   aparc+aseg
+    #   out directory
+    #   subj variable, to name output files
 
-    ## now add the subcort 
-    # the fs_lables correspond to labes in the image FS outputs
-    fs_labels=( 10 11 12 13 17 18 26 49 50 51 52 53 54 58 )
-    # 10: Left-Thalamus-Proper
-    # 11: Left-Caudate 
-    # 12: Left-Putamen
-    # 13: Left-Pallidum 
-    # 17: Left-Hippocampus
-    # 18: Left-Amygdala
-    # 26: Left-Accumbens-area
-    # 49: Right-Thalamus-Proper
-    # 50: Right-Caudate 
-    # 51: Right-Putamen
-    # 52: Right-Pallidum 
-    # 53: Right-Hippocampus
-    # 54: Right-Amygdala
-    # 58: Right-Accumbens-area
-    new_index=( 1 2 3 4 5 6 7 8 9 10 11 12 13 14 )
-    for (( x=0 ; x<14; x++ ))
-    do
+    # function output files:
+    #   ${subj}_subcort_mask.nii.gz
+    #   ${subj}_subcort_mask_binv.nii.gz
 
-        get_label=${fs_labels[x]}
-        get_index=${new_index[x]}
-
-        cmd="${FSLDIR}/bin/fslmaths \
-                ${outputDir}/${subj}_aparc+aseg.nii.gz \
-		        -thr ${get_label} -uthr ${get_label} \
-                -binv \
-                ${outputDir}/${subj}temp${get_index}.nii.gz"		
-        echo $cmd #state the command
-        log $cmd >> $OUT
-        eval $cmd #execute the command
-
-        ### first lets make sure that there is nothhing in this subcort area
-        cmd="${FSLDIR}/bin/fslmaths \
-                ${outputDir}/${subj}_subcort_mask.nii.gz \
-		        -mas ${outputDir}${subj}temp${get_index}.nii.gz \
-		        ${outputDir}/${subj}_subcort_mask.nii.gz \
-            "
-        echo $cmd #state the command
-        log $cmd >> $OUT
-        eval $cmd #execute the command
-
-        ### reverse the label now 
-        cmd="${FSLDIR}/bin/fslmaths \
-                ${outputDir}/${subj}temp${get_index}.nii.gz \
-                -binv \
-		        -mul ${get_index} \
-		        ${outputDir}/${subj}temp${get_index}.nii.gz"		
-        echo $cmd #state the command
-        log $cmd >> $OUT
-        eval $cmd #execute the command
-        
-        ### add to subcort mask image now
-        cmd="${FSLDIR}/bin/fslmaths \
-		        ${outputDir}/${subj}_subcort_mask.nii.gz \
-		        -add ${outputDir}${subj}temp${get_index}.nii.gz \
-		        ${outputDir}/${subj}_subcort_mask.nii.gz \
-                -odt int \
-            "
-        echo $cmd
-        log $cmd >> $OUT
-        eval $cmd
-    done
-    
-    # and make inverted binary mask
-    cmd="${FSLDIR}/bin/fslmaths \
-	        ${outputDir}/${subj}_subcort_mask.nii.gz \
-	        -binv \
-	        ${outputDir}/${subj}_subcort_mask_binv.nii.gz \
-            -odt int \
-        "
-    echo $cmd
-    log $cmd >> $OUT
-    eval $cmd    
-
-    ls ${outputDir}${subj}temp*.nii.gz && rm ${outputDir}${subj}temp*.nii.gz
+    get_subcort_frm_aparcAseg \
+        ${outputDir}/${subj}_aparc+aseg.nii.gz \
+        ${outputDir} \
+        ${subj} 
 
 fi
 
@@ -453,6 +381,9 @@ do
     # remove the temporary labtemp dir
     ls -d ${atlasOutputDir}/labtemp/ && rm -r ${atlasOutputDir}/labtemp/
     rm ${atlasOutputDir}/temp_list.txt
+
+    #TODO make a better remap function...
+    #TODO make a function to condition output aparc+aseg into only cort label stuff
 
     # extract only the cortex, based on the LUT table
     minVal=$(cat ${atlasOutputDir}/LUT_${atlas}.txt | awk '{print int($1)}' | head -n1)
@@ -568,11 +499,15 @@ do
         # initialize tmpDir
         mkdir -p ${atlasOutputDir}/tmpDilDir/
         
-        # inputs to function
-        #  i_cort=$1
-        #  i_cort_mask=$2
-        #  i_subcort_mask=$3
-        #  tmpDir=$4
+        # function inputs
+        #   i_cort=$1
+        #   i_cort_mask=$2
+        #   i_subcort_mask=$3
+        #   tmpDir=$4
+
+        # function output files:
+        #   none (replaces i_cort with dilated version of i_cort)
+        
         dilate_cortex \
             ${atlasOutputDir}/${atlas}_rmap.nii.gz \
             ${outputDir}/${subj}_cortical_mask.nii.gz \
@@ -621,104 +556,7 @@ log "runtime: $runtime" >> $OUT 2>/dev/null
 
 } # main 
 
-##########################################################
-##########################################################
-# FUNCTIONS
-
-log() 
-{
-    local msg="$*"
-    local dateTime=`date`
-    echo "# "$dateTime "-" $log_toolName "-" "$msg"
-    echo "$msg"
-    echo 
-}
-
-dilate_cortex()
-{
-
-    i_cort=$1
-    i_cort_mask=$2
-    i_subcort_mask=$3
-    tmpDir=$4
-
-    # make temp subcort invert
-    cmd="${FSLDIR}/bin/fslmaths \
-	        ${i_subcort_mask}  \
-	        -binv \
-	        ${tmpDir}/subcort_mask_inv_tmp.nii.gz \
-            -odt int \
-        "
-    echo $cmd
-    eval $cmd
-
-    # mask out the subcort, keep temp copy
-    cmd="${FSLDIR}/bin/fslmaths \
-		    ${i_cort} \
-		    -mas ${i_subcort_mask} \
-            ${tmpDir}/subcort_tmp.nii.gz \
-            -odt int \
-        "
-    echo $cmd
-    eval $cmd
-
-    #get cortical parcellation without subcort
-    cmd="${FSLDIR}/bin/fslmaths \
-		    ${i_cort} \
-		    -mas ${tmpDir}/subcort_mask_inv_tmp.nii.gz \
-            ${tmpDir}/cort_tmp.nii.gz \
-            -odt int \
-        "
-    echo $cmd
-    eval $cmd
-
-    ##########################################################
-    # dilate the cortex and then mask with cortical ribbon...
-    # this step is done to make sure cortical ribbon is filled
-
-    #dilate tmp cort
-    cmd="atlas_dilate \
-            ${tmpDir}/cort_tmp.nii.gz \
-            ${tmpDir}/cort_tmp2.nii.gz \
-        "
-    echo $cmd
-    eval $cmd
-
-    # check if the dilate step worked
-    if [[ ! -e ${tmpDir}/cort_tmp2.nii.gz ]]
-    then
-        return 1
-    fi
-
-    # mask this by the cortical mask
-    cmd="${FSLDIR}/bin/fslmaths \
-		    ${tmpDir}/cort_tmp2.nii.gz \
-		    -mas ${i_cort_mask} \
-            ${tmpDir}/cort_tmp2.nii.gz \
-            -odt int \
-        "
-    echo $cmd
-    eval $cmd
-
-    #remove any area that went into subcort
-    #and add back in cort
-    cmd="${FSLDIR}/bin/fslmaths \
-		    ${tmpDir}/cort_tmp2.nii.gz \
-		    -mas ${tmpDir}/subcort_mask_inv_tmp.nii.gz \
-            -add ${tmpDir}/subcort_tmp.nii.gz \
-            ${i_cort} \
-            -odt int \
-        "
-    echo $cmd
-    eval $cmd
-
-    #remove extra stuff that was created
-    ls ${tmpDir}/subcort_tmp.nii.gz && rm ${tmpDir}/subcort_tmp.nii.gz
-    ls ${tmpDir}/cort_tmp.nii.gz && rm ${tmpDir}/cort_tmp.nii.gz
-    ls ${tmpDir}/cort_tmp2.nii.gz && rm ${tmpDir}/cort_tmp2.nii.gz
-    ls ${tmpDir}/subcort_mask_inv_tmp.nii.gz && rm ${tmpDir}/subcort_mask_inv_tmp.nii.gz
-
-}
+# source the functions
 
 ####################################################################
 ####################################################################
