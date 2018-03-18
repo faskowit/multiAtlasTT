@@ -219,9 +219,6 @@ do
     fi
 done
 
-# source the funcs
-source ${scriptBaseDir}/src/maTT_funcs.sh
-
 ####################################################################
 ####################################################################
 # GET CORTICAL AND SUBCORTICAL IMAGES
@@ -446,7 +443,7 @@ do
     #add the subcortical areas relabled way#
     ########################################
 
-    # remove any stuff in area of subcortical (should be there anyways...)
+    # remove any stuff in area of subcortical (shouldnt be there anyways...)
     cmd="${FSLDIR}/bin/fslmaths \
             ${atlasOutputDir}/${atlas}_rmap.nii.gz \
             -mas ${outputDir}/${subj}_subcort_mask_binv.nii.gz \
@@ -471,7 +468,7 @@ do
     log $cmd >> $OUT
     eval $cmd
 
-    # add in the re-numbers subcortical
+    # add in the re-numbered subcortical
     cmd="${FSLDIR}/bin/fslmaths \
             ${atlasOutputDir}/${atlas}_rmap.nii.gz \
             -add ${atlasOutputDir}/${subj}_subcort_mask_${atlas}tmp.nii.gz \
@@ -556,7 +553,8 @@ log "runtime: $runtime" >> $OUT 2>/dev/null
 
 } # main 
 
-# source the functions
+# source the funcs
+source ${scriptBaseDir}/src/maTT_funcs.sh
 
 ####################################################################
 ####################################################################
