@@ -126,7 +126,7 @@ then
 fi
 
 # add check for fsVersion
-if [[ ${fsVersion} != '5p3' ]] || \
+if [[ ${fsVersion} != '5p3' ]] && \
     [[ ${fsVersion} != '6p0' ]] 
 then
     echo "fsVersion must be set and must be either:"
@@ -232,7 +232,7 @@ do
     for hemi in lh rh
     do
 
-        currentGCS=${atlasBaseDir}/${hemi}.${atlas}_${fsVersion}.gcs
+        currentGCS=${atlasBaseDir}/${atlas}/${hemi}.${atlas}_${fsVersion}.gcs
 
         if [[ ! -f ${currentGCS} ]]
         then
@@ -272,7 +272,7 @@ do
         ln -s ${outputDir}/${atlas}/lh.${atlas}.annot ${tempFSSubj}/label/lh.${atlas}.annot
         ln -s ${outputDir}/${atlas}/rh.${atlas}.annot ${tempFSSubj}/label/rh.${atlas}.annot
         # and link the LUT to the output
-        ln -s ${atlasBaseDir}/LUT_${atlas}.txt ${outputDir}/${atlas}/LUT_${atlas}.txt
+        ln -s ${atlasBaseDir}/${atlas}/LUT_${atlas}.txt ${outputDir}/${atlas}/LUT_${atlas}.txt
     fi
 
     # mri_aparc2aseg
@@ -476,7 +476,7 @@ done
 
 # delete extra stuff
 # the temp fsDirectory we setup at very beginning
-ls -d ${tempFSSubj} && rm -r ${tempFSSubj}
+ls -d ${outputDir}/tmpFsDir/ && rm -r ${outputDir}/tmpFsDir/
 
 } # main
 
