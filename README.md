@@ -1,9 +1,16 @@
 # multiAtlasTT (Beta)
 _Multi-Atlas Transfer Tools for Neuroimaging (maTT)_
 
-Given a completed FreeSurfer _recon-all_ directoy, these scripts can transfer an atlas (.annot file; also called a 'parcellation') in fsaverage space to subject space, in both volume (nifti) and surface (.annot) format. Therefore, using these tools one can obtain multiple parcellations in the subject space (in addition to the Desikan-Killiany and Destrieux parcellations that recon-all usually constructs<sup>1</sup>). The major part of the label transfer script was written by the [CJNeuroLab](https://cjneurolab.org/2016/11/22/hcp-mmp1-0-volumetric-nifti-masks-in-native-structural-space/). The goal of these tools is to make fitting multiple atlases a piece of cake. Have fun! 
+Given a completed FreeSurfer _recon-all_ directoy, these scripts can transfer an atlas (.annot file; also called a 'parcellation') in fsaverage space to subject space, in both volume (nifti) and surface (.annot) format. Therefore, using these tools one can obtain multiple parcellations in the subject space (in addition to the Desikan-Killiany and Destrieux parcellations that recon-all usually constructs<sup>1</sup>). The major part of the label transfer script was adapted from scripts written by the [CJNeuroLab](https://cjneurolab.org/2016/11/22/hcp-mmp1-0-volumetric-nifti-masks-in-native-structural-space/). The goal of these tools is to make fitting multiple atlases a piece of cake. Have fun! 
 
 This project is in *beta*; work is ongoing. Please feel free to comment via issue/pull request.
+
+#### maTT2 update
+We have now added functionality to use FreeSurfer [gaussian classifier surface atlas](https://surfer.nmr.mgh.harvard.edu/fswiki/SurfaceLabelAtlas) (.gcs) files to label individual subjects. These files are large, so they are hosted in a Figshare repository here: https://doi.org/10.6084/m9.figshare.5998583.v1
+
+The gcs files were created by running the Mindboggle 101 brains (http://dx.doi.org/10.7910/DVN/HMQKCK) through FreeSurfer _recon-all_ (versions 5.3 and 6.0) and creating individually labeled atlases using the maTT functionality. For each atlas, were created a gaussian classifer surface atlas using the 101 Mindboggle subjects. We have provided an example script for this creation process (``maTT2_caLabelTrain_example.sh``).
+
+An advantage of using the maTT2 functionality is that it takes much less time. Additionally, the maTT2-derived atlases seem to contain smoother borders between parcellated regions. 
 
 ## Prerequities
 
@@ -15,7 +22,9 @@ This project is in *beta*; work is ongoing. Please feel free to comment via issu
 
 ## Usage
 
-See ``example_run_maTT.sh`` for modifiable example scipt
+See ``example_run_maTT.sh`` for modifiable example scipt to run maTT. 
+
+See ``example_run_maTT2.sh`` for modifiable example script to run maTT2, which uses gcs files that need to be downloaded from the accompanying [figshare repositroy](https://doi.org/10.6084/m9.figshare.5998583.v1). 
 
 ## Data Sources
 
@@ -56,3 +65,5 @@ Also note that fitting a parcellation in the manner used here is not the only me
 <sup>1</sup> These tools transfer the atlas from fsaverage to subject space using [_mri_label2label_](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_label2label), whereas FreeSufer _recon-all_ uses _mris_ca_label_ to generative the Desikan and Destrieux parcellations in native space. This tool can be used as part of a pipeline to generate the appropriate .gcs files necessary for potentially using the _mris_ca_train_ and _mris_ca_label_ functions.
 
 <sup>2</sup> The creators of the HCP-MMP1.0 atlas [do not fully support](https://www.mail-archive.com/hcp-users@humanconnectome.org/msg03072.html) transfering their parcellation to volume space. This is because the HCP altas is supposed to be fit with multiple imaging modalities, multi-modal surface matching, and a perceptron; on a high resolution surface. These tools only utilize the FreeSurfer surface registration. Therefore, proceed at your own risk. See also [this preprint](https://www.biorxiv.org/content/early/2018/01/29/255620) for additional info on the HCP viewpoint.
+
+<sub> This material is based upon work supported by the National Science Foundation Graduate Research Fellowship under Grant No. 1342962. Any opinion, findings, and conclusions or recommendations expressed in this material are those of the authors(s) and do not necessarily reflect the views of the National Science Foundation. </sub>
