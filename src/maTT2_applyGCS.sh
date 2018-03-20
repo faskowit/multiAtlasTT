@@ -26,6 +26,11 @@ COMMENT
 #   scriptBaseDir
 #   atlasList
 #
+# note: the atlas atlasBaseDir needs to minimally have the lh and rh
+# GCS file, and the appropriate LUT (made after running maTT main). 
+# Because of size of GCS files, they will not be hosted on GitHub,
+# but will be hosted elsewhere--which will be aparent in the repo
+#
 ####################################################################
 ####################################################################
 
@@ -117,6 +122,15 @@ outputDir=${outputDir}/
 if [[ ! -d ${inputFSDir} ]]
 then 
     echo "input FS directory does not exist. exiting"
+    exit 1
+fi
+
+# add check for fsVersion
+if [[ ${fsVersion} != '5p3' ]] || \
+    [[ ${fsVersion} != '6p0' ]] 
+then
+    echo "fsVersion must be set and must be either:"
+    echo "5p3 or 6p0"
     exit 1
 fi
 
@@ -461,6 +475,8 @@ DONTNEED
 done
 
 # delete extra stuff
+# the temp fsDirectory we setup at very beginning
+ls -d ${tempFSSubj} && rm -r ${tempFSSubj}
 
 } # main
 
@@ -472,8 +488,6 @@ source ${scriptBaseDir}/src/maTT_funcs.sh
 
 # run main with input args from shell scrip call
 main "$@"
-
-
 
 
 
