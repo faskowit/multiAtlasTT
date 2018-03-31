@@ -47,6 +47,15 @@ touch $OUT
 # -o          outputDir ---> output directory, will also write temporary 
 # -f          fsVersion ---> freeSurfer version (5p3 or 6p0)
 
+############
+# REMINDER #
+############
+
+# for maTT2 to function, download the .gcs files from: 
+# https://doi.org/10.6084/m9.figshare.5998583.v1 
+# and put these files into the respective 
+# /atlas_data/{atlas}/ folders
+
 start=`date +%s`
 
 cmd="${scriptBaseDir}/src/maTT2_applyGCS.sh \
