@@ -19,7 +19,7 @@ export scriptBaseDir=${PWD}/
 # nspn500 gordon333 yeo17 yeo17dil hcp-mmp schaefer100-yeo17 
 # schaefer200-yeo17 schaefer400-yeo17 schaefer600-yeo17 schaefer800-yeo17 
 # schaefer1000-yeo17
-export atlasList="schaefer100-yeo17 schaefer200-yeo17 yeo17"
+export atlasList="schaefer100-yeo17 schaefer200-yeo17 yeo17 yeo17dil"
 
 ####################################################################
 ####################################################################
