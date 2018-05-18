@@ -167,7 +167,7 @@ fi
 if [[ -z ${atlasList} ]]
 then
     # all the available atlases
-    atlasList="gordon333 nspn500 yeo17 hcp-mmp schaefer100-yeo17 schaefer200-yeo17 schaefer400-yeo17 schaefer600-yeo17 schaefer800-yeo17 schaefer1000-yeo17"
+    atlasList="gordon333 nspn500 yeo17 yeo17dil hcp-mmp schaefer100-yeo17 schaefer200-yeo17 schaefer400-yeo17 schaefer600-yeo17 schaefer800-yeo17 schaefer1000-yeo17"
 else
     echo "using the atlasList exported to this script"
 fi
