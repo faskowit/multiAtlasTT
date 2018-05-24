@@ -13,7 +13,7 @@
 ####################################################################
 ####################################################################
 
-export atlasBaseDir=${PWD}/
+export atlasBaseDir=${PWD}/atlas_data/
 export scriptBaseDir=${PWD}/
 # make a list from these options: 
 # nspn500 gordon333 yeo17 yeo17dil hcp-mmp schaefer100-yeo17 
