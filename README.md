@@ -5,7 +5,7 @@ Given a completed FreeSurfer _recon-all_ directoy, these scripts can transfer an
 
 This project is in *beta*; work is ongoing. Please feel free to comment via issue/pull request.
 
-#### maTT2 update
+#### maTT2 update (recommended) 
 We have now added functionality to use FreeSurfer [gaussian classifier surface atlas](https://surfer.nmr.mgh.harvard.edu/fswiki/SurfaceLabelAtlas) (.gcs) files to label individual subjects. These files are large, so they are hosted in a Figshare repository here: https://doi.org/10.6084/m9.figshare.5998583.v1
 
 The gcs files were created by running the Mindboggle 101 brains (http://dx.doi.org/10.7910/DVN/HMQKCK) through FreeSurfer _recon-all_ (versions 5.3 and 6.0) and creating individually labeled atlases using the maTT functionality. For each atlas, we created a gaussian classifer surface atlas using the 101 Mindboggle subjects. We have provided an example script for this creation process (``maTT2_caLabelTrain_example.sh``).
@@ -30,10 +30,10 @@ After program completion, resultant file of interested will be called ``${atlas}
 
 ## Data Sources
 
-* [gordon333](https://mail.nmr.mgh.harvard.edu/pipermail//freesurfer/2017-April/051470.html) (333 nodes + 14 subcort nodes)
+* [gordon333](https://mail.nmr.mgh.harvard.edu/pipermail//freesurfer/2017-April/051470.html) & gordon333dil (333 nodes + 14 subcort nodes)
   * > Gordon, E. M., Laumann, T. O., Adeyemo, B., Huckins, J. F., Kelley, W. M., & Petersen, S. E. (2014). Generation and evaluation of a cortical area parcellation from resting-state correlations. Cerebral cortex, 26(1), 288-303.
 Chicago	
-
+  * gordon333dil is a version of the gordon atlas without gaps between the labels; was created by using the [dilateParcellation](https://github.com/faskowit/dilateParcellation) tool. It has two less regions than the gordon333, as it is missing '???' for the left and right sides
 * [hcp-mmp](https://figshare.com/articles/HCP-MMP1_0_projected_on_fsaverage/3498446) (360 nodes + 14 subcort nodes)
   * > Glasser, M. F., Coalson, T. S., Robinson, E. C., Hacker, C. D., Harwell, J., Yacoub, E., ... & Smith, S. M. (2016). A multi-modal parcellation of human cerebral cortex. Nature, 536(7615), 171-178.
   * <sup>2</sup>
@@ -52,6 +52,20 @@ Chicago
   * > Zuo, X.N., et al. An open science resource for establishing reliability and reproducibility in functional connectomics, Sci data, 1:140049, 2014.
   * yeo17dil is a version of the yeo17 split-label atlas without gaps between the labels; was created by using the [dilateParcellation](https://github.com/faskowit/dilateParcellation) tool
   * <sup>3</sup>
+* Added data from [Arslan et. al 2017 Box](https://imperialcollegelondon.app.box.com/s/g5q0kyvpqdha5jgofhmiov9ws1ao0hi0/)  (*note: experimental*) 
+  * We transformed the Arslan data, which is fs_LR 32k space, to fsaverage space, and then made .annot files in this space. For these data, we created arbitrary parcel names and LUT files. The LUT files here seem to have some weirdness in them regarding hemisphere assignments. Thus, these atlases are provided as a means to slice up the cortex. The names and correspondences of the LUT should be determined independently; *not* based on the LUT files provided here. 
+  * arslan_res* (150, 250, 347 + 14 subcort nodes)
+    * > Arslan, S., & Rueckert, D. (2015, October). Multi-level parcellation of the cerebral cortex using resting-state fMRI. In International Conference on Medical Image Computing and Computer-Assisted Intervention (pp. 47-54). Springer, Cham.
+  * baldassano (172 + 14 subcort nodes)
+    * > Baldassano, C., Beck, D. M., & Fei-Fei, L. (2015). Parcellating connectivity in spatial maps. PeerJ, 3, e784.
+  * fan (210 + 14 subcort nodes)
+    * > Fan, L., Li, H., Zhuo, J., Zhang, Y., Wang, J., Chen, L., ... & Fox, P. T. (2016). The human brainnetome atlas: a new brain atlas based on connectional architecture. Cerebral cortex, 26(8), 3508-3526.
+  * ica (168 + 14 subcort nodes)
+    * > Beckmann, C. F., & Smith, S. M. (2004). Probabilistic independent component analysis for functional magnetic resonance imaging. IEEE transactions on medical imaging, 23(2), 137-152.
+  * power (130 + 14 subcort nodes)
+    * > Power, J. D., Cohen, A. L., Nelson, S. M., Wig, G. S., Barnes, K. A., Church, J. A., ... & Petersen, S. E. (2011). Functional network organization of the human brain. Neuron, 72(4), 665-678.
+  * shen (200 + 14 subcort nodes)
+    * > Shen, X., Tokoglu, F., Papademetris, X., & Constable, R. T. (2013). Groupwise whole-brain parcellation from resting-state fMRI data for network node identification. Neuroimage, 82, 403-415.
 
 ## Notes
 
