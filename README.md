@@ -34,9 +34,12 @@ After program completion, resultant file of interested will be called ``${atlas}
   * > Gordon, E. M., Laumann, T. O., Adeyemo, B., Huckins, J. F., Kelley, W. M., & Petersen, S. E. (2014). Generation and evaluation of a cortical area parcellation from resting-state correlations. Cerebral cortex, 26(1), 288-303.
 Chicago	
   * gordon333dil is a version of the gordon atlas without gaps between the labels; was created by using the [dilateParcellation](https://github.com/faskowit/dilateParcellation) tool. It has two less regions than the gordon333, as it is missing '???' for the left and right sides
-* [hcp-mmp](https://figshare.com/articles/HCP-MMP1_0_projected_on_fsaverage/3498446) (360 nodes + 14 subcort nodes)
+* [hcp-mmp](https://figshare.com/articles/HCP-MMP1_0_projected_on_fsaverage/3498446) & hcp-mmp-b (360 nodes + 14 subcort nodes)
   * > Glasser, M. F., Coalson, T. S., Robinson, E. C., Hacker, C. D., Harwell, J., Yacoub, E., ... & Smith, S. M. (2016). A multi-modal parcellation of human cerebral cortex. Nature, 536(7615), 171-178.
   * <sup>2</sup>
+  * hcp-mmp is a version of the HCP-MMP1.0 atlas derrived from data kindly provided on [figShare](https://figshare.com/articles/HCP-MMP1_0_projected_on_fsaverage/3498446). Details about how these annotation files were created can be found at that repository.
+  * hcp-mmp-b is a version of the HCP-MMP1.0 atlas converted from the [BALSA database](https://balsa.wustl.edu/study/show/RVVG)
+  (file: Q1-Q6_RelatedValidation210.CorticalAreas_dil_Final_Final_Areas_Group_Colors.32k_fs_LR.dlabel.nii) using the [fsLR_2_fsaverage_4_labels](https://github.com/faskowit/fsLR_2_fsaverage_4_labels) tool. This tool follows the recommendations found [here](https://wiki.humanconnectome.org/display/PublicData/HCP+Users+FAQ#HCPUsersFAQ-9.HowdoImapdatabetweenFreeSurferandHCP?) using the [8may2017](http://brainvis.wustl.edu/workbench/standard_mesh_atlases_8may2017.zip) data. _Note_: this hcp-mmp-b atlas does not have '???' regions for the left and right hemis, wheresas the hcp-mmp atlas does. This affects the final node label indices in the rmap files. Also, the color LUT of the hcp-mmp-b is slightly different.
  
 * [nspn500](https://github.com/KirstieJane/NSPN_WhitakerVertes_PNAS2016/tree/master/FS_SUBJECTS/fsaverageSubP) (308 nodes + 14 subcort nodes)
   * > Whitaker, K. J., Vértes, P. E., Romero-Garcia, R., Váša, F., Moutoussis, M., Prabhu, G., ... & Tait, R. (2016). Adolescence is associated with genomically patterned consolidation of the hubs of the human brain connectome. Proceedings of the National Academy of Sciences, 113(32), 9105-9110.
@@ -84,7 +87,7 @@ Also note that fitting a parcellation in the manner used here is not the only me
 
 <sup>2</sup> The creators of the HCP-MMP1.0 atlas [do not fully support](https://www.mail-archive.com/hcp-users@humanconnectome.org/msg03072.html) transfering their parcellation to volume space. This is because the HCP altas is supposed to be fit with multiple imaging modalities, multi-modal surface matching, and a perceptron; on a high resolution surface. These tools only utilize the FreeSurfer surface registration. Therefore, proceed at your own risk. See also [this preprint](https://www.biorxiv.org/content/early/2018/01/29/255620) for additional info on the HCP viewpoint.
 
-<sup>3</sup> The yeo17 atlas used here is the subdivided 17 atlas, which containes 57 nodes per hemisphere. This atlas was originally in fsaverage5 space, but we have upsampled it to fsaverage space. Note that gaps exist between atlas regions; these gaps are labeled as intensities 1 and 59 for the left and right hemisphere respectively. 
+<sup>3</sup> The yeo17 atlas used here is the subdivided 17 atlas, which contains 57 nodes per hemisphere. This atlas was originally in fsaverage5 space, but we have upsampled it to fsaverage space. Note that gaps exist between atlas regions; these gaps are labeled as intensities 1 and 59 for the left and right hemisphere respectively. 
 
 <sup>4</sup> Note that the FreeSurfer annotation adds 1000 to values of the left hemisphere and 2000 to values of the right hemisphere. In the output folder, there will also be a non-rmap'ed file saved, for reference.
 
