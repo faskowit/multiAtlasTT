@@ -9,6 +9,8 @@ Copyright (c) 2018 Josh Faskowitz
 See LICENSE file for license
 COMMENT
 
+DEBUG="true"
+
 ####################################################################
 ####################################################################
 #
@@ -376,7 +378,7 @@ do
     cp ${inputFSDir}/label/?h.${subj}_${atlas}.annot ${atlasOutputDir}/
 
     # remove the temporary labtemp dir
-    ls -d ${atlasOutputDir}/labtemp/ && rm -r ${atlasOutputDir}/labtemp/
+    [[ "${DEBUG}" == true ]] || rm -r ${atlasOutputDir}/labtemp/
     rm ${atlasOutputDir}/temp_list.txt
 
     #TODO make a better remap function...
