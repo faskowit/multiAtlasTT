@@ -370,6 +370,12 @@ do
 
     atlasOutputDir=${outputDir}/${atlas}/
 
+    if [[ -e ${atlasOutputDir}/${atlas}_rmap.nii.gz ]]
+    then
+        echo "remapped image already exists."
+        continue
+    fi
+
     # extract only the cortex, based on the LUT table
     minVal=$(cat ${atlasOutputDir}/LUT_${atlas}.txt | awk '{print int($1)}' | head -n1)
     maxVal=$(cat ${atlasOutputDir}/LUT_${atlas}.txt | awk '{print int($1)}' | tail -n1)

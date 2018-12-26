@@ -66,6 +66,8 @@ output_dir=$d
 first=1
 last=$(wc -l < ${subject_list_all})
 
+DEBUG="true"
+
 if [[ -z ${N} ]]
 then 
     N=4
@@ -174,11 +176,34 @@ done
 ############################################################################################
 ############################################################################################
 # Create ctabs with actual regions
-paste ${output_dir}/temp_${first}_${last}/${annotation_file}_number_tableL ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L3 > ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L
+
+# LEFT
+# initialize with unknown
+# edit. NOT GOOD IDEA
+#printf "0\tunknown 1 2 5 0\n" > ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L
+> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L
+
+paste ${output_dir}/temp_${first}_${last}/${annotation_file}_number_tableL ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L3 >> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L
+
 paste ${output_dir}/temp_${first}_${last}/LUT_number_table_${annotation_file}L ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}L > ${output_dir}/temp_${first}_${last}/LUT_left_${annotation_file}
-paste ${output_dir}/temp_${first}_${last}/${annotation_file}_number_tableR ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R3 > ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R
+
+# RIGHT
+# initialize with unknown
+# edit. NOT GOOD IDEA
+#printf "0\tunknown 1 2 5 0\n" > ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R
+> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R
+
+paste ${output_dir}/temp_${first}_${last}/${annotation_file}_number_tableR ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R3 >> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R
+
 paste ${output_dir}/temp_${first}_${last}/LUT_number_table_${annotation_file}R ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}R > ${output_dir}/temp_${first}_${last}/LUT_right_${annotation_file}
-cat ${output_dir}/temp_${first}_${last}/LUT_left_${annotation_file} ${output_dir}/temp_${first}_${last}/LUT_right_${annotation_file} > ${output_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt
+
+# LUT
+# initialize
+# edit. NOT GOOD IDEA
+#printf "0\tunknown\n" > ${output_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt
+> ${output_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt
+
+cat ${output_dir}/temp_${first}_${last}/LUT_left_${annotation_file} ${output_dir}/temp_${first}_${last}/LUT_right_${annotation_file} >> ${output_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt
 
 ############################################################################################
 ############################################################################################
@@ -200,6 +225,7 @@ for subject in $(cat ${subject_list})
 
     else
 
+        # removing files that we'll create
 		rm -f ${output_dir}/${subject}/label2annot_${annotation_file}?h.log
 		rm -f ${output_dir}/${subject}/log_label2label
 
@@ -222,7 +248,16 @@ for subject in $(cat ${subject_list})
  
             echo "transforming ${label}"
 			${FREESURFER_HOME}/bin/mri_label2label --srcsubject fsaverage --srclabel ${output_dir}/label/${label} --trgsubject ${subject} --trglabel ${output_dir}/${subject}/label/${label}.label --regmethod surface --hemi rh >> ${output_dir}/${subject}/log_label2label & 
+
+            #add pid to list
+            pid=$!
+            echo $pid >> ${output_dir}/temp_${first}_${last}/pid_list_R.txt
+
 		done 
+
+        # adding another wait
+        wait $(cat ${output_dir}/temp_${first}_${last}/pid_list_R.txt) 2> /dev/null
+
         )
 
 
@@ -235,7 +270,16 @@ for subject in $(cat ${subject_list})
 
             echo "transforming ${label}"
 			${FREESURFER_HOME}/bin/mri_label2label --srcsubject fsaverage --srclabel ${output_dir}/label/${label} --trgsubject ${subject} --trglabel ${output_dir}/${subject}/label/${label}.label --regmethod surface --hemi lh >> ${output_dir}/${subject}/log_label2label &
+
+            #add pid to list
+            pid=$!
+            echo $pid >> ${output_dir}/temp_${first}_${last}/pid_list_L.txt
+
 		done
+
+        # adding another wait
+        wait $(cat ${output_dir}/temp_${first}_${last}/pid_list_L.txt) 2> /dev/null
+
         )
 
         ####################################################################################
@@ -246,19 +290,30 @@ for subject in $(cat ${subject_list})
 
 		for labelsR in `cat ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}R`
 		do 
-            printf " --l ${output_dir}/${subject}/label/${labelsR}" >> ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_R
+
+            if [ -e ${output_dir}/${subject}/label/${labelsR} ]
+		    then
+                echo "adding ${labelsR}"
+                printf " --l ${output_dir}/${subject}/label/${labelsR}" >> ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_R
+            else
+                echo "DID NOT ADD ${labelsR}"
+            fi
+
 		done
 
 		for labelsL in `cat ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}L`
 		do 
             if [ -e ${output_dir}/${subject}/label/${labelsL} ]
-		    then 
+		    then
+                echo "adding ${labelsL}"
                 printf " --l ${output_dir}/${subject}/label/${labelsL}" >> ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_L
-			fi
+			else
+                echo "DID NOT ADD ${labelsL}"
+            fi
 		done
 	
-		${FREESURFER_HOME}/bin/mris_label2annot --s ${subject} --h rh `cat ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_R` --a ${subject}_${annotation_file} --ctab ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R >> ${output_dir}/${subject}/label2annot_${annotation_file}rh.log 
 		${FREESURFER_HOME}/bin/mris_label2annot --s ${subject} --h lh `cat ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_L` --a ${subject}_${annotation_file} --ctab ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L >> ${output_dir}/${subject}/label2annot_${annotation_file}lh.log 
+		${FREESURFER_HOME}/bin/mris_label2annot --s ${subject} --h rh `cat ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_R` --a ${subject}_${annotation_file} --ctab ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R >> ${output_dir}/${subject}/label2annot_${annotation_file}rh.log 
 
 	fi # if annotation files already exist
 
@@ -278,8 +333,8 @@ done # for subject in subject list
 
 # keep color tabs (ctab)
 mv ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_? ${output_dir}/${subject}/
-rm -r ${output_dir}/temp_${first}_${last}
-rm ${subject_list}
+[[ "${DEBUG}" == true ]] || rm -r ${output_dir}/temp_${first}_${last}
+[[ "${DEBUG}" == true ]] || rm ${subject_list}
 
 
 
