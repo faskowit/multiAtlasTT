@@ -9,7 +9,7 @@ Copyright (c) 2018 Josh Faskowitz
 See LICENSE file for license
 COMMENT
 
-DEBUG="true"
+DEBUG="no"
 
 ####################################################################
 ####################################################################
