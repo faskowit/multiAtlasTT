@@ -57,7 +57,14 @@ if isequal(inStruct.rh.ct.table(1,:),inStruct.lh.ct.table(1,:))
     tmpVals = inStruct.rh.ct.table(1,:) + [ 0 1 0 0 0 ] ;
     inStruct.rh.ct.table(1,:) = tmpVals ;
     % r + g*2^8 + b*2^16 + flag*2^24 
-    inStruct.rh.ct.table(1,5) = tmpVals(1) + tmpVals(2)*2^8 + tmpVals(3)*2^16 + tmpVals(4)*2^24 ;
+    newLab = tmpVals(1) + tmpVals(2)*2^8 + tmpVals(3)*2^16 + tmpVals(4)*2^24 ;
+     
+    oldLab = inStruct.lh.ct.table(1,5) ;
+    
+    % change old vals to new unique vals
+    inStruct.rh.lab(inStruct.rh.lab == oldLab) = newLab ;
+    % change that lad identifier
+    inStruct.rh.ct.table(1,5) = newLab ;
 end 
 
 fileDir = dirname(inStruct.lh.file) ;
