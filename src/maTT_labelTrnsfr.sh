@@ -66,11 +66,7 @@ output_dir=$d
 first=1
 last=$(wc -l < ${subject_list_all})
 
-<<<<<<< HEAD
 DEBUG="no"
-=======
-DEBUG="true"
->>>>>>> 81be2afe59017c2a4534fb1a2667444ad03296b5
 
 if [[ -z ${N} ]]
 then 
