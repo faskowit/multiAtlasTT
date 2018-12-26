@@ -333,13 +333,9 @@ done # for subject in subject list
 
 # keep color tabs (ctab)
 mv ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_? ${output_dir}/${subject}/
-<<<<<<< HEAD
 [[ "${DEBUG}" == "true" ]] || rm -r ${output_dir}/temp_${first}_${last}
 [[ "${DEBUG}" == "true" ]] || rm ${subject_list}
-=======
-[[ "${DEBUG}" == true ]] || rm -r ${output_dir}/temp_${first}_${last}
-[[ "${DEBUG}" == true ]] || rm ${subject_list}
->>>>>>> 81be2afe59017c2a4534fb1a2667444ad03296b5
+
 
 
 
