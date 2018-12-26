@@ -9,7 +9,7 @@ Copyright (c) 2018 Josh Faskowitz
 See LICENSE file for license
 COMMENT
 
-DEBUG="no"
+DEBUG="true"
 
 ####################################################################
 ####################################################################
@@ -379,6 +379,7 @@ do
 
     # remove the temporary labtemp dir
     [[ "${DEBUG}" == "true" ]] || rm -r ${atlasOutputDir}/labtemp/
+
     rm ${atlasOutputDir}/temp_list.txt
 
     #TODO make a better remap function...
