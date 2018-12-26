@@ -66,7 +66,7 @@ output_dir=$d
 first=1
 last=$(wc -l < ${subject_list_all})
 
-DEBUG="true"
+DEBUG="no"
 
 if [[ -z ${N} ]]
 then 
@@ -333,8 +333,8 @@ done # for subject in subject list
 
 # keep color tabs (ctab)
 mv ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_? ${output_dir}/${subject}/
-[[ "${DEBUG}" == true ]] || rm -r ${output_dir}/temp_${first}_${last}
-[[ "${DEBUG}" == true ]] || rm ${subject_list}
+[[ "${DEBUG}" == "true" ]] || rm -r ${output_dir}/temp_${first}_${last}
+[[ "${DEBUG}" == "true" ]] || rm ${subject_list}
 
 
 
