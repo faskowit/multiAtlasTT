@@ -27,7 +27,7 @@ def main():
     names = [x.split()[1] for x in open(labs_file).readlines()]  
 
     # init o_data
-    o_data = np.zeros(i_data.shape)
+    o_data = np.zeros(i_data.shape,dtype=np.int32)
 
     # print remap to file
     f = open(str(o_file +'_remap.txt'),'w')
