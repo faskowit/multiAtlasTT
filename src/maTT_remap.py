@@ -24,6 +24,7 @@ def main():
 
     # get labs from first colum of LUT table
     labs = [x.split()[0] for x in open(labs_file).readlines()]  
+    names = [x.split()[1] for x in open(labs_file).readlines()]  
 
     # init o_data
     o_data = np.zeros(i_data.shape)
@@ -36,7 +37,7 @@ def main():
         print(x)
         w = np.where(i_data == int(labs[x]))
         o_data[w[0],w[1],w[2]] = (x + 1)
-        f.write( "{}\t->\t{}\n".format(  str(labs[x]), str(x + 1) ) ) 
+        f.write( "{}\t->\t{}\t== {} \n".format(  str(labs[x]), str(x + 1), str(names[x]) ) ) 
 
     f.close()
 
