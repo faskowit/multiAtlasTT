@@ -9,6 +9,8 @@ Copyright (c) 2018 Josh Faskowitz
 See LICENSE file for license
 COMMENT
 
+DEBUG="true"
+
 ####################################################################
 ####################################################################
 #
@@ -376,7 +378,8 @@ do
     cp ${inputFSDir}/label/?h.${subj}_${atlas}.annot ${atlasOutputDir}/
 
     # remove the temporary labtemp dir
-    ls -d ${atlasOutputDir}/labtemp/ && rm -r ${atlasOutputDir}/labtemp/
+    [[ "${DEBUG}" == "true" ]] || rm -r ${atlasOutputDir}/labtemp/
+
     rm ${atlasOutputDir}/temp_list.txt
 
     #TODO make a better remap function...
@@ -524,6 +527,16 @@ do
         echo "did not dilate atlas within cortex"
         echo "resulting atlas might not fill cortical ribbon"
     fi
+    
+    # enfore that rmap is int
+    cmd="${FSLDIR}/bin/fslmaths \
+            ${atlasOutputDir}/${atlas}_rmap.nii.gz \
+            ${atlasOutputDir}/${atlas}_rmap.nii.gz \
+            -odt int \
+        "
+    echo $cmd
+    log $cmd >> $OUT
+    eval $cmd 
 
 done # loop through atlas list
 
