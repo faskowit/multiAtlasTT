@@ -33,7 +33,7 @@ COMMENT
 
 # -L subject_list_name
 # -a name_of_annotation_file (without hemisphere or extension; in this case, HCPMMP1)
-# -d name_of_output_dir (will be created in $SUBJECTS_DIR)
+# -d name_of_tmp_out_dir (will be created in $SUBJECTS_DIR)
 
 # define compulsory and optional arguments
 while getopts ":n:L:f:l:a:d::" o; do
@@ -61,7 +61,7 @@ fi
 
 annotation_file=$a
 subject_list_all=$L
-output_dir=$d
+tmp_out_dir=$d
 
 first=1
 last=$(wc -l < ${subject_list_all})
@@ -89,11 +89,17 @@ fi
 sed -n "${first},${last} p" ${subject_list_all} > temp_subject_list_${first}_${last}
 subject_list=temp_subject_list_${first}_${last}
 
-mkdir -p ${output_dir}
-mkdir -p ${output_dir}/label
-mkdir -p ${output_dir}/temp_${first}_${last}
-rm -f ${output_dir}/temp_${first}_${last}/colortab_?
-rm -f ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}?
+# this is a brute force option...
+if [[ -d ${tmp_out_dir} ]]
+then
+    ls -d ${tmp_out_dir} && rm -r ${tmp_out_dir}
+fi
+
+mkdir -p ${tmp_out_dir}/label
+mkdir -p ${tmp_out_dir}/temp_${first}_${last}
+
+#ls ${tmp_out_dir}/temp_${first}_${last}/colortab_* && rm -f ${tmp_out_dir}/temp_${first}_${last}/colortab_*
+#ls ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}* && rm -f ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}*
 
 ############################################################################################
 ############################################################################################
@@ -110,67 +116,67 @@ fi
 ############################################################################################
 ############################################################################################
 # Convert annotation to label, and get color lookup tables
-rm -f ${output_dir}/log_annotation2label
+> ${tmp_out_dir}/temp_${first}_${last}/log_annotation2label
 
-${FREESURFER_HOME}/bin/mri_annotation2label --subject fsaverage --hemi lh --outdir ${output_dir}/label --annotation ${annotation_file} >> ${output_dir}/temp_${first}_${last}/log_annotation2label
+${FREESURFER_HOME}/bin/mri_annotation2label --subject fsaverage --hemi lh --outdir ${tmp_out_dir}/label --annotation ${annotation_file} >> ${tmp_out_dir}/temp_${first}_${last}/log_annotation2label
 
-${FREESURFER_HOME}/bin/mri_annotation2label --subject fsaverage --hemi lh --outdir ${output_dir}/label --annotation ${annotation_file} --ctab ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L1 >> ${output_dir}/temp_${first}_${last}/log_annotation2label
+${FREESURFER_HOME}/bin/mri_annotation2label --subject fsaverage --hemi lh --outdir ${tmp_out_dir}/label --annotation ${annotation_file} --ctab ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L1 >> ${tmp_out_dir}/temp_${first}_${last}/log_annotation2label
 
-${FREESURFER_HOME}/bin/mri_annotation2label --subject fsaverage --hemi rh --outdir ${output_dir}/label --annotation ${annotation_file} >> ${output_dir}/temp_${first}_${last}/log_annotation2label
+${FREESURFER_HOME}/bin/mri_annotation2label --subject fsaverage --hemi rh --outdir ${tmp_out_dir}/label --annotation ${annotation_file} >> ${tmp_out_dir}/temp_${first}_${last}/log_annotation2label
 
-${FREESURFER_HOME}/bin/mri_annotation2label --subject fsaverage --hemi rh --outdir ${output_dir}/label --annotation ${annotation_file} --ctab ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R1 >> ${output_dir}/temp_${first}_${last}/log_annotation2label
+${FREESURFER_HOME}/bin/mri_annotation2label --subject fsaverage --hemi rh --outdir ${tmp_out_dir}/label --annotation ${annotation_file} --ctab ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R1 >> ${tmp_out_dir}/temp_${first}_${last}/log_annotation2label
 
 ############################################################################################
 ############################################################################################
 # Remove number columns from ctab
-awk '!($1="")' ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L1 >> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L2
-awk '!($1="")' ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R1 >> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R2
+awk '!($1="")' ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L1 >> ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L2
+awk '!($1="")' ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R1 >> ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R2
 
 ############################################################################################
 ############################################################################################
 # Create list with region names
-awk '{print $2}' ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L1 > ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}L1
-awk '{print $2}' ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R1 > ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}R1
+awk '{print $2}' ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L1 > ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}L1
+awk '{print $2}' ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R1 > ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}R1
 
 ############################################################################################
 ############################################################################################
 # Create lists with regions that actually have corresponding labels
 # LEFT HEMI
-for labelsL in `cat ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}L1`
+for labelsL in `cat ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}L1`
 do 
-    if [[ -e ${output_dir}/label/lh.${labelsL}.label ]]
+    if [[ -e ${tmp_out_dir}/label/lh.${labelsL}.label ]]
 	then
-		echo lh.${labelsL}.label >> ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}L
-		grep " ${labelsL} " ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L2 >> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L3
+		echo lh.${labelsL}.label >> ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}L
+		grep " ${labelsL} " ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L2 >> ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L3
 	fi
 done
 # RIGHT HEMI
-for labelsR in `cat ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}R1`
+for labelsR in `cat ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}R1`
 do 
-    if [[ -e ${output_dir}/label/rh.${labelsR}.label ]]
+    if [[ -e ${tmp_out_dir}/label/rh.${labelsR}.label ]]
     then
-		echo rh.${labelsR}.label >> ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}R
-		grep " ${labelsR} " ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R2 >> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R3
+		echo rh.${labelsR}.label >> ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}R
+		grep " ${labelsR} " ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R2 >> ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R3
 	fi
 done
 
 ############################################################################################
 ############################################################################################
 # Create new numbers column
-number_labels_R=`wc -l < ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}R` 
-number_labels_L=`wc -l < ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}L`
+number_labels_R=`wc -l < ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}R` 
+number_labels_L=`wc -l < ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}L`
 
 for ((i=1;i<=${number_labels_L};i+=1))
 do 
     num=`echo "${i}+1000" | bc`
-	printf "$num\n" >> ${output_dir}/temp_${first}_${last}/LUT_number_table_${annotation_file}L
-	printf "$i\n" >> ${output_dir}/temp_${first}_${last}/${annotation_file}_number_tableL
+	printf "$num\n" >> ${tmp_out_dir}/temp_${first}_${last}/LUT_number_table_${annotation_file}L
+	printf "$i\n" >> ${tmp_out_dir}/temp_${first}_${last}/${annotation_file}_number_tableL
 done
 for ((i=1;i<=${number_labels_R};i+=1))
 do 
     num=`echo "${i}+2000" | bc`
-	printf "$num\n" >> ${output_dir}/temp_${first}_${last}/LUT_number_table_${annotation_file}R
-	printf "$i\n" >> ${output_dir}/temp_${first}_${last}/${annotation_file}_number_tableR
+	printf "$num\n" >> ${tmp_out_dir}/temp_${first}_${last}/LUT_number_table_${annotation_file}R
+	printf "$i\n" >> ${tmp_out_dir}/temp_${first}_${last}/${annotation_file}_number_tableR
 done
 
 ############################################################################################
@@ -180,30 +186,30 @@ done
 # LEFT
 # initialize with unknown
 # edit. NOT GOOD IDEA
-#printf "0\tunknown 1 2 5 0\n" > ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L
-> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L
+#printf "0\tunknown 1 2 5 0\n" > ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L
+> ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L
 
-paste ${output_dir}/temp_${first}_${last}/${annotation_file}_number_tableL ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L3 >> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L
+paste ${tmp_out_dir}/temp_${first}_${last}/${annotation_file}_number_tableL ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L3 >> ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L
 
-paste ${output_dir}/temp_${first}_${last}/LUT_number_table_${annotation_file}L ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}L > ${output_dir}/temp_${first}_${last}/LUT_left_${annotation_file}
+paste ${tmp_out_dir}/temp_${first}_${last}/LUT_number_table_${annotation_file}L ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}L > ${tmp_out_dir}/temp_${first}_${last}/LUT_left_${annotation_file}
 
 # RIGHT
 # initialize with unknown
 # edit. NOT GOOD IDEA
-#printf "0\tunknown 1 2 5 0\n" > ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R
-> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R
+#printf "0\tunknown 1 2 5 0\n" > ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R
+> ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R
 
-paste ${output_dir}/temp_${first}_${last}/${annotation_file}_number_tableR ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R3 >> ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R
+paste ${tmp_out_dir}/temp_${first}_${last}/${annotation_file}_number_tableR ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R3 >> ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R
 
-paste ${output_dir}/temp_${first}_${last}/LUT_number_table_${annotation_file}R ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}R > ${output_dir}/temp_${first}_${last}/LUT_right_${annotation_file}
+paste ${tmp_out_dir}/temp_${first}_${last}/LUT_number_table_${annotation_file}R ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}R > ${tmp_out_dir}/temp_${first}_${last}/LUT_right_${annotation_file}
 
 # LUT
 # initialize
 # edit. NOT GOOD IDEA
-#printf "0\tunknown\n" > ${output_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt
-> ${output_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt
+#printf "0\tunknown\n" > ${tmp_out_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt
+> ${tmp_out_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt
 
-cat ${output_dir}/temp_${first}_${last}/LUT_left_${annotation_file} ${output_dir}/temp_${first}_${last}/LUT_right_${annotation_file} >> ${output_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt
+cat ${tmp_out_dir}/temp_${first}_${last}/LUT_left_${annotation_file} ${tmp_out_dir}/temp_${first}_${last}/LUT_right_${annotation_file} >> ${tmp_out_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt
 
 ############################################################################################
 ############################################################################################
@@ -213,9 +219,9 @@ for subject in $(cat ${subject_list})
 	do printf "\n>>>> PREPROCESSING ${subject} <<<< \n"
     echo $subject
 
-	echo $(date) > ${output_dir}/temp_${first}_${last}/start_date
-	echo ">>>> START TIME: `cat ${output_dir}/temp_${first}_${last}/start_date` <<<<"
-	mkdir -p ${output_dir}/${subject}/label
+	echo $(date) > ${tmp_out_dir}/temp_${first}_${last}/start_date
+	echo ">>>> START TIME: `cat ${tmp_out_dir}/temp_${first}_${last}/start_date` <<<<"
+	mkdir -p ${tmp_out_dir}/${subject}/label
 
 	if [[ -e ${subject}/label/lh.${subject}_${annotation_file}.annot ]] && [[ -e ${subject}/label/rh.${subject}_${annotation_file}.annot ]]
 		then
@@ -226,10 +232,10 @@ for subject in $(cat ${subject_list})
     else
 
         # removing files that we'll create
-		rm -f ${output_dir}/${subject}/label2annot_${annotation_file}?h.log
-		rm -f ${output_dir}/${subject}/log_label2label
+		rm -f ${tmp_out_dir}/${subject}/label2annot_${annotation_file}?h.log
+		rm -f ${tmp_out_dir}/${subject}/log_label2label
 
-		cp ${output_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt ${output_dir}/${subject}/
+		cp ${tmp_out_dir}/temp_${first}_${last}/LUT_${annotation_file}.txt ${tmp_out_dir}/${subject}/
 
         ####################################################################################
         ####################################################################################
@@ -241,89 +247,89 @@ for subject in $(cat ${subject_list})
 
         (
         # RIGHT HEMI
-		for label in `cat ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}R`
+		for label in `cat ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}R`
 		do
             ((i=i%N))
             ((i++==0)) && wait
  
             echo "transforming ${label}"
-			${FREESURFER_HOME}/bin/mri_label2label --srcsubject fsaverage --srclabel ${output_dir}/label/${label} --trgsubject ${subject} --trglabel ${output_dir}/${subject}/label/${label}.label --regmethod surface --hemi rh >> ${output_dir}/${subject}/log_label2label & 
+			${FREESURFER_HOME}/bin/mri_label2label --srcsubject fsaverage --srclabel ${tmp_out_dir}/label/${label} --trgsubject ${subject} --trglabel ${tmp_out_dir}/${subject}/label/${label}.label --regmethod surface --hemi rh >> ${tmp_out_dir}/${subject}/log_label2label & 
 
             #add pid to list
             pid=$!
-            echo $pid >> ${output_dir}/temp_${first}_${last}/pid_list_R.txt
+            echo $pid >> ${tmp_out_dir}/temp_${first}_${last}/pid_list_R.txt
 
 		done 
 
         # adding another wait
-        wait $(cat ${output_dir}/temp_${first}_${last}/pid_list_R.txt) 2> /dev/null
+        wait $(cat ${tmp_out_dir}/temp_${first}_${last}/pid_list_R.txt) 2> /dev/null
 
         )
 
 
         (
         # LEFT HEMI
-		for label in `cat ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}L`
+		for label in `cat ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}L`
 		do 
             ((i=i%N))
             ((i++==0)) && wait
 
             echo "transforming ${label}"
-			${FREESURFER_HOME}/bin/mri_label2label --srcsubject fsaverage --srclabel ${output_dir}/label/${label} --trgsubject ${subject} --trglabel ${output_dir}/${subject}/label/${label}.label --regmethod surface --hemi lh >> ${output_dir}/${subject}/log_label2label &
+			${FREESURFER_HOME}/bin/mri_label2label --srcsubject fsaverage --srclabel ${tmp_out_dir}/label/${label} --trgsubject ${subject} --trglabel ${tmp_out_dir}/${subject}/label/${label}.label --regmethod surface --hemi lh >> ${tmp_out_dir}/${subject}/log_label2label &
 
             #add pid to list
             pid=$!
-            echo $pid >> ${output_dir}/temp_${first}_${last}/pid_list_L.txt
+            echo $pid >> ${tmp_out_dir}/temp_${first}_${last}/pid_list_L.txt
 
 		done
 
         # adding another wait
-        wait $(cat ${output_dir}/temp_${first}_${last}/pid_list_L.txt) 2> /dev/null
+        wait $(cat ${tmp_out_dir}/temp_${first}_${last}/pid_list_L.txt) 2> /dev/null
 
         )
 
         ####################################################################################
         ####################################################################################
 		# Convert labels to annot (in subject space)
-		rm -f ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_R
-		rm -f ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_L
+		rm -f ${tmp_out_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_R
+		rm -f ${tmp_out_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_L
 
-		for labelsR in `cat ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}R`
+		for labelsR in `cat ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}R`
 		do 
 
-            if [ -e ${output_dir}/${subject}/label/${labelsR} ]
+            if [ -e ${tmp_out_dir}/${subject}/label/${labelsR} ]
 		    then
                 echo "adding ${labelsR}"
-                printf " --l ${output_dir}/${subject}/label/${labelsR}" >> ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_R
+                printf " --l ${tmp_out_dir}/${subject}/label/${labelsR}" >> ${tmp_out_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_R
             else
                 echo "DID NOT ADD ${labelsR}"
             fi
 
 		done
 
-		for labelsL in `cat ${output_dir}/temp_${first}_${last}/list_labels_${annotation_file}L`
+		for labelsL in `cat ${tmp_out_dir}/temp_${first}_${last}/list_labels_${annotation_file}L`
 		do 
-            if [ -e ${output_dir}/${subject}/label/${labelsL} ]
+            if [ -e ${tmp_out_dir}/${subject}/label/${labelsL} ]
 		    then
                 echo "adding ${labelsL}"
-                printf " --l ${output_dir}/${subject}/label/${labelsL}" >> ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_L
+                printf " --l ${tmp_out_dir}/${subject}/label/${labelsL}" >> ${tmp_out_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_L
 			else
                 echo "DID NOT ADD ${labelsL}"
             fi
 		done
 	
-		${FREESURFER_HOME}/bin/mris_label2annot --s ${subject} --h lh `cat ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_L` --a ${subject}_${annotation_file} --ctab ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_L >> ${output_dir}/${subject}/label2annot_${annotation_file}lh.log 
-		${FREESURFER_HOME}/bin/mris_label2annot --s ${subject} --h rh `cat ${output_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_R` --a ${subject}_${annotation_file} --ctab ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_R >> ${output_dir}/${subject}/label2annot_${annotation_file}rh.log 
+		${FREESURFER_HOME}/bin/mris_label2annot --s ${subject} --h lh `cat ${tmp_out_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_L` --a ${subject}_${annotation_file} --ctab ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_L >> ${tmp_out_dir}/${subject}/label2annot_${annotation_file}lh.log 
+		${FREESURFER_HOME}/bin/mris_label2annot --s ${subject} --h rh `cat ${tmp_out_dir}/temp_${first}_${last}/temp_cat_${annotation_file}_R` --a ${subject}_${annotation_file} --ctab ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_R >> ${tmp_out_dir}/${subject}/label2annot_${annotation_file}rh.log 
 
 	fi # if annotation files already exist
 
     ########################################################################################
     ########################################################################################
 	# Convert annot to volume
-	rm -f ${output_dir}/${subject}/log_aparc2aseg
-	${FREESURFER_HOME}/bin/mri_aparc2aseg --s ${subject} --volmask --o ${output_dir}/${subject}/${annotation_file}.nii.gz  --annot ${subject}_${annotation_file} >> ${output_dir}/${subject}/log_aparc2aseg
+	rm -f ${tmp_out_dir}/${subject}/log_aparc2aseg
+	${FREESURFER_HOME}/bin/mri_aparc2aseg --s ${subject} --volmask --o ${tmp_out_dir}/${subject}/${annotation_file}.nii.gz  --annot ${subject}_${annotation_file} >> ${tmp_out_dir}/${subject}/log_aparc2aseg
 
-	echo ">>>> ${subject} STARTED AT `cat ${output_dir}/temp_${first}_${last}/start_date`, "
+	echo ">>>> ${subject} STARTED AT `cat ${tmp_out_dir}/temp_${first}_${last}/start_date`, "
     echo "ENDED AT: $(date)  <<<<"
 
 done # for subject in subject list
@@ -332,8 +338,8 @@ done # for subject in subject list
 ############################################################################################
 
 # keep color tabs (ctab)
-mv ${output_dir}/temp_${first}_${last}/colortab_${annotation_file}_? ${output_dir}/${subject}/
-[[ "${DEBUG}" == "true" ]] || rm -r ${output_dir}/temp_${first}_${last}
+mv ${tmp_out_dir}/temp_${first}_${last}/colortab_${annotation_file}_? ${tmp_out_dir}/${subject}/
+[[ "${DEBUG}" == "true" ]] || rm -r ${tmp_out_dir}/temp_${first}_${last}
 [[ "${DEBUG}" == "true" ]] || rm ${subject_list}
 
 

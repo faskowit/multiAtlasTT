@@ -205,6 +205,8 @@ cp -asv ${inputFSDir}/surf/?h.sphere.reg ${tempFSSubj}/surf/
 cp -asv ${inputFSDir}/surf/?h.white ${tempFSSubj}/surf/
 cp -asv ${inputFSDir}/surf/?h.pial ${tempFSSubj}/surf/
 cp -asv ${inputFSDir}/surf/?h.smoothwm ${tempFSSubj}/surf/
+cp -asv ${inputFSDir}/surf/?h.sulc ${tempFSSubj}/surf/
+cp -asv ${inputFSDir}/surf/?h.thickness ${tempFSSubj}/surf/
 
 # label
 cp -asv ${inputFSDir}/label/?h.cortex.label ${tempFSSubj}/label/
