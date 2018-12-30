@@ -327,15 +327,53 @@ fi
 if [[ ! -e ${outputDir}/${subj}_cortical_mask.nii.gz ]]
 then
 
-    cmd="${FSLDIR}/bin/fslmaths \
-            ${subjAparcAseg} \
-            -thr 1000 -bin \
-            ${outputDir}/${subj}_cortical_mask.nii.gz \
-            -odt int \
-        "
+    # let's get a lh and rh, get largest component of each
+    cmd="${FREESURFER_HOME}/bin/mri_binarize \
+            --i ${subjAparcAseg} \
+            --min 1000 --max 1999 --binval 1 \
+            --o ${outputDir}/lh.tmp_cort_mask.nii.gz \
+        "     
     echo $cmd #state the command
     log $cmd >> $OUT
     eval $cmd #execute the command
+    cmd="${FREESURFER_HOME}/bin/mri_extract_largest_CC \
+            -T 1 \
+            ${outputDir}/lh.tmp_cort_mask.nii.gz \
+            ${outputDir}/lh.tmp_cort_mask.nii.gz \
+        "     
+    echo $cmd #state the command
+    log $cmd >> $OUT
+    eval $cmd #execute the command
+
+    cmd="${FREESURFER_HOME}/bin/mri_binarize \
+            --i ${subjAparcAseg} \
+            --min 2000 --max 2999 --binval 1 \
+            --o ${outputDir}/rh.tmp_cort_mask.nii.gz \
+        "     
+    echo $cmd #state the command
+    log $cmd >> $OUT
+    eval $cmd #execute the command
+    cmd="${FREESURFER_HOME}/bin/mri_extract_largest_CC \
+            -T 1 \
+            ${outputDir}/rh.tmp_cort_mask.nii.gz \
+            ${outputDir}/rh.tmp_cort_mask.nii.gz \
+        "     
+    echo $cmd #state the command
+    log $cmd >> $OUT
+    eval $cmd #execute the command
+
+    # write out the combined cortical_mask
+    cmd="${FREESURFER_HOME}/bin/mris_calc \
+            -o ${outputDir}/${subj}_cortical_mask.nii.gz \
+            ${outputDir}/lh.tmp_cort_mask.nii.gz \
+            add ${outputDir}/rh.tmp_cort_mask.nii.gz \
+        "
+    echo $cmd
+    log $cmd >> $OUT
+    eval $cmd
+
+    # remove the tmp
+    ls ${outputDir}/?h.tmp_cort_mask.nii.gz && rm ${outputDir}/?h.tmp_cort_mask.nii.gz
 
 fi
 
@@ -392,20 +430,6 @@ do
     echo $cmd
     log $cmd >> $OUT
     eval $cmd
-
-<<'DONTNEED'
-    # move atlas from freesurfer conformed ---> native space
-    cmd="${FREESURFER_HOME}/bin/mri_vol2vol \
-            --mov ${atlasOutputDir}/${atlas}.nii.gz \
-            --targ ${inputFSDir}/mri/rawavg.mgz \
-            --regheader \
-            --o ${atlasOutputDir}/${atlas}.nii.gz \
-            --no-save-reg --nearest \
-        "
-    echo $cmd
-    log $cmd >> $OUT
-    eval $cmd
-DONTNEED
 
     # look at only cortical
     cmd="${FSLDIR}/bin/fslmaths \
