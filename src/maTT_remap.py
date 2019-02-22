@@ -33,7 +33,7 @@ def main():
     f = open(str(o_file +'_remap.txt'),'w')
     
     # loop over the labs
-    for x in xrange(0,len(labs)):
+    for x in range(0,len(labs)):
         print(x)
         w = np.where(i_data == int(labs[x]))
         o_data[w[0],w[1],w[2]] = (x + 1)
@@ -42,7 +42,7 @@ def main():
     f.close()
 
     # save output
-    o_img = nib.Nifti1Image(o_data, i_img.get_affine())
+    o_img = nib.Nifti1Image(o_data, i_img.affine)
     nib.save(o_img, o_file)
 
 if __name__ == '__main__':

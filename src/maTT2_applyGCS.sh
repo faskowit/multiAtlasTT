@@ -452,7 +452,7 @@ do
     #  i_file = str(argv[1])
     #  o_file = str(argv[2])
     #  labs_file = str(argv[3])
-    cmd="python2.7 ${scriptBaseDir}/src/maTT_remap.py \
+    cmd="python3 ${scriptBaseDir}/src/maTT_remap.py \
             ${atlasOutputDir}/${atlas}.nii.gz \
             ${atlasOutputDir}/${atlas}_rmap.nii.gz \
             ${atlasOutputDir}/LUT_${atlas}.txt \

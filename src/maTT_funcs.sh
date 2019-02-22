@@ -97,7 +97,7 @@ get_subcort_frm_aparcAseg()
     #  i_file = str(argv[1])
     #  o_file = str(argv[2])
     #  labs_file = str(argv[3])
-    cmd="python2.7 ${scriptBaseDir}/src/maTT_remap.py \
+    cmd="python3 ${scriptBaseDir}/src/maTT_remap.py \
             ${oDir}/${subj}temp_subcort_mask2.nii.gz \
             ${oDir}/${subj}_subcort_mask.nii.gz \
             ${oDir}/${subj}temp_remap_list.txt \
