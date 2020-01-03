@@ -92,12 +92,17 @@ get_subcort_frm_aparcAseg()
     #log $cmd >> $OUT
     #eval $cmd #execute the command
 
+    if [[ -n ${py_bin} ]] ; then
+        echo "using py given to script"
+    else
+        py_bin=python
+    fi
     # instead, just remap
     # inputs to python script -->
     #  i_file = str(argv[1])
     #  o_file = str(argv[2])
     #  labs_file = str(argv[3])
-    cmd="python3 ${scriptBaseDir}/src/maTT_remap.py \
+    cmd="${py_bin} ${scriptBaseDir}/src/maTT_remap.py \
             ${oDir}/${subj}temp_subcort_mask2.nii.gz \
             ${oDir}/${subj}_subcort_mask.nii.gz \
             ${oDir}/${subj}temp_remap_list.txt \

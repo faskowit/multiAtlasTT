@@ -448,11 +448,16 @@ do
     # remaps lables to start at 1-(n labels), assumes the LUT is the 
     # simple LUT produced by make_fs_stuff script
 
+    if [[ -n ${py_bin} ]] ; then
+        echo "using py given to script"
+    else
+        py_bin=python
+    fi
     # inputs to python script -->
     #  i_file = str(argv[1])
     #  o_file = str(argv[2])
     #  labs_file = str(argv[3])
-    cmd="python3 ${scriptBaseDir}/src/maTT_remap.py \
+    cmd="${py_bin} ${scriptBaseDir}/src/maTT_remap.py \
             ${atlasOutputDir}/${atlas}.nii.gz \
             ${atlasOutputDir}/${atlas}_rmap.nii.gz \
             ${atlasOutputDir}/LUT_${atlas}.txt \
