@@ -6,9 +6,9 @@ Given a completed FreeSurfer _recon-all_ directoy, these scripts can transfer an
 This project is in *beta*; work is ongoing. Please feel free to comment via issue/pull request.
 
 #### maTT2 update (recommended) 
-We have now added functionality to use FreeSurfer [gaussian classifier surface atlas](https://surfer.nmr.mgh.harvard.edu/fswiki/SurfaceLabelAtlas) (.gcs) files to label individual subjects. These files are large, so they are hosted in a Figshare repository here: https://doi.org/10.6084/m9.figshare.5998583.v1
+We have now added functionality to use FreeSurfer [gaussian classifier surface atlas](https://surfer.nmr.mgh.harvard.edu/fswiki/SurfaceLabelAtlas) (.gcs) files to label individual subjects. These files are large, so they are hosted in a Figshare repository here: https://doi.org/10.6084/m9.figshare.5998583.
 
-The gcs files were created by running the Mindboggle 101 brains (http://dx.doi.org/10.7910/DVN/HMQKCK) through FreeSurfer _recon-all_ (versions 5.3 and 6.0) and creating individually labeled atlases using the maTT functionality. For each atlas, we created a gaussian classifer surface atlas using the 101 Mindboggle subjects. We have provided an example script for this creation process (``maTT2_caLabelTrain_example.sh``).
+The gcs files were created by running the Mindboggle 101 brains (http://dx.doi.org/10.7910/DVN/HMQKCK) through FreeSurfer _recon-all_ (versions 5.3 and 6.0) and creating individually labeled atlases using the maTT functionality. For each atlas, we created a gaussian classifer surface atlas using the 101 Mindboggle subjects. We have provided an example script for this creation process (``maTT2_caLabelTrain_example.sh``). We have also trained gaussian classifier surface atlases using the HCP unrelated 100 subjects; these can be found here: https://doi.org/10.6084/m9.figshare.7552853. 
 
 An advantage of using the maTT2 functionality is that it takes much less time. Additionally, the maTT2-derived atlases seem to contain smoother borders between parcellated regions. 
 
@@ -16,7 +16,7 @@ An advantage of using the maTT2 functionality is that it takes much less time. A
 
 * FSL
 * FreeSurfer
-* [easy_lausanne](https://github.com/mattcieslak/easy_lausanne)
+* [easy_lausanne](https://github.com/mattcieslak/easy_lausanne) (optional, but good to have)
   * meaning you have nibabel and numpy too
   * Also, easy_lausanne is a great tool that you should check out!
 
@@ -34,6 +34,7 @@ After program completion, resultant file of interested will be called ``${atlas}
   * > Gordon, E. M., Laumann, T. O., Adeyemo, B., Huckins, J. F., Kelley, W. M., & Petersen, S. E. (2014). Generation and evaluation of a cortical area parcellation from resting-state correlations. Cerebral cortex, 26(1), 288-303.
 Chicago	
   * gordon333dil is a version of the gordon atlas without gaps between the labels; was created by using the [dilateParcellation](https://github.com/faskowit/dilateParcellation) tool. It has two less regions than the gordon333, as it is missing '???' for the left and right sides
+  * **note**: due to a since fixed parallelization error, results using gordon333's .gca (the maTT2 workflow) will be missing region no. 333 (rh.R_Auditory_24.label). The cortical real estate originally occuplied by this region will be described by other node areas near this original region in the maTT2 outputs. Thus, using the maTT2 workflow with the MindBoggle trained .gca files will render a parcellation with 332 cortical nodes and 14 subcortical nodes. 
 * [hcp-mmp](https://figshare.com/articles/HCP-MMP1_0_projected_on_fsaverage/3498446) & hcp-mmp-b (360 nodes + 14 subcort nodes)
   * > Glasser, M. F., Coalson, T. S., Robinson, E. C., Hacker, C. D., Harwell, J., Yacoub, E., ... & Smith, S. M. (2016). A multi-modal parcellation of human cerebral cortex. Nature, 536(7615), 171-178.
   * <sup>2</sup>
