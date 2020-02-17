@@ -5,7 +5,7 @@ Given a completed FreeSurfer _recon-all_ directoy, these scripts can transfer an
 
 This project is in *beta*; work is ongoing. Please feel free to comment via issue/pull request.
 
-#### maTT2 update (recommended) 
+#### maTT2 update (_recommended_) 
 We have now added functionality to use FreeSurfer [gaussian classifier surface atlas](https://surfer.nmr.mgh.harvard.edu/fswiki/SurfaceLabelAtlas) (.gcs) files to label individual subjects. These files are large, so they are hosted in a Figshare repository here: https://doi.org/10.6084/m9.figshare.5998583.
 
 The gcs files were created by running the Mindboggle 101 brains (http://dx.doi.org/10.7910/DVN/HMQKCK) through FreeSurfer _recon-all_ (versions 5.3 and 6.0) and creating individually labeled atlases using the maTT functionality. For each atlas, we created a gaussian classifer surface atlas using the 101 Mindboggle subjects. We have provided an example script for this creation process (``maTT2_caLabelTrain_example.sh``). We have also trained gaussian classifier surface atlases using the HCP unrelated 100 subjects; these can be found here: https://doi.org/10.6084/m9.figshare.7552853. 
@@ -19,6 +19,7 @@ An advantage of using the maTT2 functionality is that it takes much less time. A
 * [easy_lausanne](https://github.com/mattcieslak/easy_lausanne) (optional, but good to have)
   * meaning you have nibabel and numpy too
   * Also, easy_lausanne is a great tool that you should check out!
+* Unix enviorment to run scripts on (developed on Ubuntu 16.04)
 
 ## Usage
 
@@ -26,11 +27,11 @@ See ``example_run_maTT.sh`` for modifiable example scipt to run maTT.
 
 See ``example_run_maTT2.sh`` for modifiable example script to run maTT2, which uses gcs files that need to be downloaded from the accompanying [figshare repositroy](https://doi.org/10.6084/m9.figshare.5998583.v1). 
 
-## What do these scripts ouput?
+## What do these scripts output?
 
 After program completion, resultant file of interested will be called ``${atlas}/${atlas}_rmap.nii.gz`` (rmap stands for re-mapped) which will contain the atlas labels 1:(num labels). 14 Subcortical labels will be added at the end. There will be a filed called ``${atlas}/${atlas}_rmap.nii.gz_remap.txt`` which described how the original label numbers from the FreeSurfer annotation<sup>4</sup> were mapped to this rmap nifti file. 
 
-The LUT (look up table) files will let you know the names of the cortical labels (but remember the extra 14 at the end, which correspond to [these regions](./atlas_data/LUT_subcort.txt)). For example, see the LUT for the Schaefer100 [here](./atlas_data/schaefer100-yeo17/LUT_schaefer100-yeo17.txt) or for the hcp-mmp [here](./atlas_data/hcp-mmp-b/LUT_hcp-mmp-b.txt). Please pay attention to the regions labeled stuff like `unknown` or `???` in the LUT. These regions will liekly be in your ``${atlas}/${atlas}_rmap.nii.gz`` ... but you probably want to ignore them for analysis! 
+The LUT (look up table) files will let you know the names of the cortical labels (but remember the extra 14 at the end, which correspond to [these regions](./atlas_data/LUT_subcort.txt) which are extracted from the FreeSurfer segmentation). For example, see the LUT for the Schaefer100 [here](./atlas_data/schaefer100-yeo17/LUT_schaefer100-yeo17.txt) or for the hcp-mmp [here](./atlas_data/hcp-mmp-b/LUT_hcp-mmp-b.txt). Please pay attention to the regions labeled stuff like `unknown` or `???` in the LUT. These regions will liekly be in your ``${atlas}/${atlas}_rmap.nii.gz`` ... but you probably want to ignore them for analysis. 
 
 Sometimes, parcellation regions on the surface atlas might be so small, that they don't render in the output volume. In this case, the indicies of the outputs will still correspond to the LUT (in other words, the indices should not be shifted!). Be aware that this could happen and adjust downstream analysis code accordingly please. 
 
@@ -89,6 +90,8 @@ Useful reading for considering what parcellation to use:
 Note that the atlases here are not a comprehensive set of the parcellations used in neuroimaging. If you would like to see another parcellation (in fsaverage space) supported here, feel free to post an issue/pull request! 
 
 Also note that fitting a parcellation in the manner used here is not the only method for fitting parcellations to neuroimage data. While these tools warp an 'average' brain to each subject, some methods compute individualized parcellations based on subject-level data. 
+
+Checkout the [Brainlife.io](https://brainlife.io/) version of this tool [here](https://github.com/faskowit/app-multiAtlasTT).
 
 <sup>1</sup> These tools transfer the atlas from fsaverage to subject space using [_mri_label2label_](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_label2label), whereas FreeSufer _recon-all_ uses _mris_ca_label_ to generative the Desikan and Destrieux parcellations in native space. This tool can be used as part of a pipeline to generate the appropriate .gcs files necessary for potentially using the _mris_ca_train_ and _mris_ca_label_ functions.
 
