@@ -26,7 +26,13 @@ See ``example_run_maTT.sh`` for modifiable example scipt to run maTT.
 
 See ``example_run_maTT2.sh`` for modifiable example script to run maTT2, which uses gcs files that need to be downloaded from the accompanying [figshare repositroy](https://doi.org/10.6084/m9.figshare.5998583.v1). 
 
+## What do these scripts ouput?
+
 After program completion, resultant file of interested will be called ``${atlas}/${atlas}_rmap.nii.gz`` (rmap stands for re-mapped) which will contain the atlas labels 1:(num labels). 14 Subcortical labels will be added at the end. There will be a filed called ``${atlas}/${atlas}_rmap.nii.gz_remap.txt`` which described how the original label numbers from the FreeSurfer annotation<sup>4</sup> were mapped to this rmap nifti file. 
+
+The LUT (look up table) files will let you know the names of the cortical labels (but remember the extra 14 at the end, which correspond to [these regions](./atlas_data/LUT_subcort.txt)). For example, see the LUT for the Schaefer100 [here](./atlas_data/schaefer100-yeo17/LUT_schaefer100-yeo17.txt) or for the hcp-mmp [here](./atlas_data/hcp-mmp-b/LUT_hcp-mmp-b.txt). Please pay attention to the regions labeled stuff like `unknown` or `???` in the LUT. These regions will liekly be in your ``${atlas}/${atlas}_rmap.nii.gz`` ... but you probably want to ignore them for analysis! 
+
+Sometimes, parcellation regions on the surface atlas might be so small, that they don't render in the output volume. In this case, the indicies of the outputs will still correspond to the LUT (in other words, the indices should not be shifted!). Be aware that this could happen and adjust downstream analysis code accordingly please. 
 
 ## Data Sources
 
