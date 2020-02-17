@@ -482,7 +482,8 @@ do
     eval $cmd
 
     # get the max value from cortical atlas image
-    maxCortical=$(fslstats ${atlasOutputDir}/${atlas}_rmap.nii.gz -R | awk '{print int($2)}')
+    # maxCortical=$(fslstats ${atlasOutputDir}/${atlas}_rmap.nii.gz -R | awk '{print int($2)}')
+    maxCortical=$(wc -l ${atlasOutputDir}/LUT_${atlas}.txt | awk '{print int($1)}')
     # add the max value to subcort, theshold out areas that should be 0
     cmd="${FSLDIR}/bin/fslmaths \
             ${outputDir}/${subj}_subcort_mask.nii.gz \
