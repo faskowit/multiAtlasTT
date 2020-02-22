@@ -235,3 +235,139 @@ dilate_cortex()
 
 ##########################################################
 
+make_annot_stats()
+{
+
+    local annot=$1 # a path to a file
+    local inFsDir=$2 # path to a dir
+    local inHemi=$3 # string 
+    local outDir=$4 # path to a dir
+    local annotName=$5 # string
+
+    cmd="${FREESURFER_HOME}/bin/mris_anatomical_stats \
+            -cortex ${inFsDir}/label/${inHemi}.cortex.label
+            -f ${outDir}/tmp.stats \
+            -b \
+            -a ${annot} \
+            $(basename $inFsDir) ${inHemi} white \
+        "
+    echo $cmd #state the command
+    eval $cmd #execute the command
+
+    # only retain the rows with stats info
+    cat ${outDir}/tmp.stats | \
+        grep "ColHeaders" | \
+        sed 's,^#\s,,' > ${outDir}/tmp2.stats
+    # output all non-header columns to the file
+    grep "^[^#;]" ${outDir}/tmp.stats >> ${outDir}/tmp2.stats
+    # make into csv
+    cat ${outDir}/tmp2.stats | \
+            sed 's/\s/,/g' | \
+            sed 's/,\{2,\}/,/g' | \
+            sed 's/^,//' > ${outDir}/${inHemi}.${annotName}.stats.csv
+
+    # remove the tmp stats
+    ls ${outDir}/tmp2.stats && rm ${outDir}/tmp2.stats
+    # rename the original output 
+    mv ${outDir}/tmp.stats ${outDir}/${inHemi}.${annotName}.stats.tab
+
+}
+
+##########################################################
+
+make_seg_stats()
+{
+
+    local inSeg=$1 # path to nifti
+    local outDir=$2 # path to a dir
+    local annotName=$3 # string
+
+    cmd="${FREESURFER_HOME}/bin/mri_segstats \
+            --seg $inSeg \
+            --excludeid 0 \
+            --sum ${outDir}/tmp.stats \
+        "
+    echo $cmd 
+    eval $cmd
+
+    # only retain the rows with stats info
+    cat ${outDir}/tmp.stats | \
+        grep "ColHeaders" | \
+        sed 's,^#\s,,' > ${outDir}/tmp2.stats
+    # output all non-header columns to the file
+    grep "^[^#;]" ${outDir}/tmp.stats >> ${outDir}/tmp2.stats
+    # make into csv
+    cat ${outDir}/tmp2.stats | \
+            sed 's/\s/,/g' | \
+            sed 's/,\{2,\}/,/g' | \
+            sed 's/^,//' > ${outDir}/${annotName}.segvol.csv
+
+    # remove the tmp stats
+    ls ${outDir}/tmp2.stats && rm ${outDir}/tmp2.stats
+    # rename the original output 
+    mv ${outDir}/tmp.stats ${outDir}/${annotName}.segvol.tab
+
+}
+
+##########################################################
+
+make_seg_coords()
+{
+    
+    local inputVol=$1
+    local inputMask=$2
+    local outputDir=$3
+    local annotName=$4
+
+    for coordStyle in mm # vox
+    do
+
+        if [[ ${coordStyle}=='mm' ]]
+        then
+            fslstatCmd="-c"
+        else
+            fslstatCmd="-C"
+        fi
+
+        #get the center of gravity stuff...
+        # in voxel coords
+        cmd="${FSLDIR}/bin/fslstats \
+                -K ${inputVol} ${inputVol} \
+                ${fslstatCmd} \
+                -k ${inputMask} 2>/dev/null \
+            "
+        echo $cmd
+        log $cmd >> $OUT
+        tmpRes=$(eval $cmd)
+        
+        #save the results temp
+        for x in $tmpRes ; do echo ${x} ; 
+        done | pr -ts"," --columns 3 --across > ${outputDir}/temp_coords_1.txt
+
+        cmd="${FSLDIR}/bin/fslstats \
+                -K ${inputVol} ${inputVol} \
+                -M \
+                -k ${inputMask} 2>/dev/null \
+            "
+        echo $cmd
+        log $cmd >> $OUT
+        imgIndex=$(eval $cmd)
+
+        for x in $imgIndex ; do echo ${x} ; 
+        done | pr -ts"," --columns 1 --across > ${outputDir}/temp_indicies_1.txt
+
+        # vertical concat
+        paste -d "," ${outputDir}/temp_indicies_1.txt ${outputDir}/temp_coords_1.txt > ${outputDir}/temp_coords_2.txt
+        
+        #add line numbers 
+        awk -F',' -v OFS="," '{print NR,int($1),$2,$3,$4}' ${outputDir}/temp_coords_2.txt > ${outputDir}/${annotName}_coords_${coordStyle}.csv
+
+    done # in mm vox
+
+    #####################
+    # now remove stuff
+    ls ${outputDir}/temp_*.txt && rm ${outputDir}/temp_*.txt
+
+}
+
+##########################################################

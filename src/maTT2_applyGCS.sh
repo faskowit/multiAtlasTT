@@ -198,7 +198,7 @@ tempFSSubj=${outputDir}/tmpFsDir/${subj}/
 # copy minimally to speed up
 mkdir -p ${tempFSSubj}/surf/
 mkdir -p ${tempFSSubj}/label/
-mkdir -p ${tempFSSubj}/mri/
+mkdir -p ${tempFSSubj}/mri/transforms/
 
 # surf
 cp -asv ${inputFSDir}/surf/?h.sphere.reg ${tempFSSubj}/surf/
@@ -215,6 +215,10 @@ cp -asv ${inputFSDir}/label/?h.cortex.label ${tempFSSubj}/label/
 cp -asv ${inputFSDir}/mri/aseg.mgz ${tempFSSubj}/mri/
 cp -asv ${inputFSDir}/mri/ribbon.mgz ${tempFSSubj}/mri/
 cp -asv ${inputFSDir}/mri/rawavg.mgz ${tempFSSubj}/mri/
+cp -asv ${inputFSDir}/mri/wm.mgz ${tempFSSubj}/mri/
+cp -asv ${inputFSDir}/mri/brainmask.mgz ${tempFSSubj}/mri/
+cp -asv ${inputFSDir}/mri/aseg.presurf.mgz ${tempFSSubj}/mri/
+cp -asv ${inputFSDir}/mri/transforms/talairach.xfm ${tempFSSubj}/mri/transforms/
 
 # reset SUJECTS_DIR to the new inputFSDir
 export SUBJECTS_DIR=${outputDir}/tmpFsDir/
@@ -226,7 +230,7 @@ export SUBJECTS_DIR=${outputDir}/tmpFsDir/
 for atlas in ${atlasList}
 do
  
-    if [[ -e ${outputDir}/${atlas}/${atlas}.mgz ]]
+    if [[ -e ${outputDir}/${atlas}/${atlas}.nii.gz ]]
     then 
         continue 
     fi
@@ -398,6 +402,18 @@ then
         ${outputDir} \
         ${subj} 
 
+    # make a mask
+    cmd="${FSLDIR}/bin/fslmaths \
+            ${outputDir}/${subj}_cortical_mask.nii.gz \
+            -add ${outputDir}/${subj}_subcort_mask.nii.gz \
+            -bin \
+            ${outputDir}/${subj}_both_mask.nii.gz \
+            -odt int \
+        "
+    echo $cmd
+    log $cmd >> $OUT
+    eval $cmd
+
 fi
 
 ####################################################################
@@ -466,6 +482,13 @@ do
     log $cmd >> $OUT
     eval $cmd
 
+    if [[ ! -f ${atlasOutputDir}/${atlas}_rmap.nii.gz ]] ; then
+        echo "could not generate the rmap"
+        echo "please check that python has nibabel"
+        echo "exiting"
+        exit 1
+    fi
+
     ########################################
     #add the subcortical areas relabled way#
     ########################################
@@ -509,6 +532,59 @@ do
 
     # remove temp files
     ls ${atlasOutputDir}/${subj}_subcort_mask_${atlas}tmp.nii.gz && rm ${atlasOutputDir}/${subj}_subcort_mask_${atlas}tmp.nii.gz 
+    ls ${atlasOutputDir}/${atlas}.mgz && rm ${atlasOutputDir}/${atlas}.mgz
+
+done
+
+for atlas in ${atlasList}
+do
+
+    atlasOutputDir=${outputDir}/${atlas}/
+
+    if [[ -e ${atlasOutputDir}/${atlas}_coords_mm.csv ]] ; then
+        echo "already did stats"
+        continue
+    fi
+
+    ################################################################
+    # make some stats!!
+
+    # make_annot_stats()
+    # annot=$1 # a path to a file
+    # inFsDir=$2 # path to a dir
+    # inHemi=$3 # string 
+    # outDir=$4 # path to a dir
+    # annotName=$5 # string
+    for hh in lh rh 
+    do
+
+        make_annot_stats \
+            ${atlasOutputDir}/${hh}.${atlas}.annot \
+            ${tempFSSubj} \
+            ${hh} \
+            ${atlasOutputDir}/ \
+            ${atlas} 
+    done
+
+    # make_seg_stats()
+    # inSeg=$1 # path to nifti
+    # outDir=$2 # path to a dir
+    # annotName=$3 # string
+    make_seg_stats \
+        ${atlasOutputDir}/${atlas}_rmap.nii.gz \
+        ${atlasOutputDir}/ \
+        ${atlas}
+
+    # make_seg_coords()
+    # inputVol=$1
+    # inputMask=$2
+    # outputDir=$3
+    # annotName=$4
+    make_seg_coords \
+        ${atlasOutputDir}/${atlas}_rmap.nii.gz \
+        ${outputDir}/${subj}_both_mask.nii.gz \
+        ${atlasOutputDir}/ \
+        ${atlas}
 
 done
 
