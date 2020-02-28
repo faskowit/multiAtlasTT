@@ -1,7 +1,7 @@
 # multiAtlasTT (Beta)
 _Multi-Atlas Transfer Tools for Neuroimaging (maTT)_
 
-Given a completed FreeSurfer _recon-all_ directory, these scripts can transfer an atlas (.annot file; also called a 'parcellation') in fsaverage space to subject space, in both volume (nifti) and surface (.annot) format. Therefore, using these tools one can obtain multiple parcellations in the subject space (in addition to the Desikan-Killiany and Destrieux parcellations that recon-all usually constructs<sup>1</sup>). The major part of the label transfer script was adapted from scripts written by the [CJNeuroLab](https://cjneurolab.org/2016/11/22/hcp-mmp1-0-volumetric-nifti-masks-in-native-structural-space/). The goal of these tools is to make fitting multiple atlases a piece of cake. Have fun! 
+Given a completed FreeSurfer _recon-all_ directory, these scripts can transfer an atlas (.annot file; also called a 'parcellation') in fsaverage space to _**subject space**_, in both volume (nifti) and surface (.annot) format. Therefore, using these tools one can obtain multiple parcellations in the subject space<sup>5</sup> (in addition to the Desikan-Killiany and Destrieux parcellations that recon-all usually constructs<sup>1</sup>). The major part of the label transfer script was adapted from scripts written by the [CJNeuroLab](https://cjneurolab.org/2016/11/22/hcp-mmp1-0-volumetric-nifti-masks-in-native-structural-space/). The goal of these tools is to make fitting multiple atlases a piece of cake. Have fun! 
 
 This project is in *beta*; work is ongoing. Please feel free to comment via issue/pull request.
 
@@ -11,6 +11,8 @@ We have now added functionality to use FreeSurfer [Gaussian classifier surface a
 The gcs files were created by running the Mindboggle 101 brains (http://dx.doi.org/10.7910/DVN/HMQKCK) through FreeSurfer _recon-all_ (versions 5.3 and 6.0) and creating individually labeled atlases using the maTT functionality. For each atlas, we created a Gaussian classifer surface atlas using the 101 Mindboggle subjects. We have provided an example script for this creation process (``maTT2_caLabelTrain_example.sh``). We have also trained Gaussian classifier surface atlases using the HCP unrelated 100 subjects; these can be found here: https://doi.org/10.6084/m9.figshare.7552853. 
 
 An advantage of using the maTT2 functionality is that it takes much less time. Additionally, the maTT2-derived atlases seem to contain smoother borders between parcellated regions. 
+
+![just_a_fun_pic](./atlas_data/sch200_rand.png)
 
 ## Prerequities
 
@@ -95,12 +97,14 @@ Checkout the [Brainlife.io](https://brainlife.io/) version of this tool [here](h
 
 ### Footnotes
 
-<sup>1</sup> These tools transfer the atlas from fsaverage to subject space using [_mri_label2label_](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_label2label), whereas FreeSufer _recon-all_ uses _mris_ca_label_ to generative the Desikan and Destrieux parcellations in native space. This tool can be used as part of a pipeline to generate the appropriate .gcs files necessary for potentially using the _mris_ca_train_ and _mris_ca_label_ functions.
+<sup>1</sup> The maTT tools transfer the atlas from fsaverage to subject space using [_mri_label2label_](https://surfer.nmr.mgh.harvard.edu/fswiki/mri_label2label), whereas FreeSufer _recon-all_ uses _mris_ca_label_ to generative the Desikan and Destrieux parcellations in native space. This tool can be used as part of a pipeline to generate the appropriate .gcs files necessary for potentially using the _mris_ca_train_ and _mris_ca_label_ functions. In fact, this is what we did to make the .gcs files for the maTT2 functionality.
 
 <sup>2</sup> The creators of the HCP-MMP1.0 atlas [do not fully support](https://www.mail-archive.com/hcp-users@humanconnectome.org/msg03072.html) transferring their parcellation to volume space. This is because the HCP altas is supposed to be fit with multiple imaging modalities, multi-modal surface matching, and a perceptron; on a high resolution surface. These tools only utilize the FreeSurfer surface registration. Therefore, proceed at your own risk. See also [this preprint](https://www.biorxiv.org/content/early/2018/01/29/255620) for additional info on the HCP viewpoint.
 
 <sup>3</sup> The yeo17 atlas used here is the subdivided 17 atlas, which contains 57 nodes per hemisphere. This atlas was originally in fsaverage5 space, but we have upsampled it to fsaverage space. Note that gaps exist between atlas regions; these gaps are labeled as intensities 1 and 59 for the left and right hemisphere respectively. 
 
 <sup>4</sup> Note that the FreeSurfer annotation adds 1000 to values of the left hemisphere and 2000 to values of the right hemisphere. In the output folder, there will also be a non-rmap'ed file saved, for reference.
+
+<sup>5</sup> The subject space referred to here is the space that the T1w image was in when submitted to the _recon-all_ script. 
 
 <sub> This material is based upon work supported by the National Science Foundation Graduate Research Fellowship under Grant No. 1342962. Any opinion, findings, and conclusions or recommendations expressed in this material are those of the authors(s) and do not necessarily reflect the views of the National Science Foundation. </sub>
