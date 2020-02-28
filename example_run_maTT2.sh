@@ -13,13 +13,33 @@
 ####################################################################
 ####################################################################
 
+# for maTT2 to function, download the .gcs files from: 
+# https://doi.org/10.6084/m9.figshare.5998583  
+# or here:
+# https://doi.org/10.6084/m9.figshare.7552853
+# and put these files into the 
+# /atlas_data/{atlas}/ folders that correspond to
+# the atlasBaseDir variable set here
 export atlasBaseDir=${PWD}/atlas_data/
+
+# this is just the location where these scripts live
+# ... needed so that the ${scriptBaseDir}/src can 
+# be found
 export scriptBaseDir=${PWD}/
+
 # make a list from these options: 
-# nspn500 gordon333 yeo17 yeo17dil hcp-mmp schaefer100-yeo17 
+# nspn500 gordon333 yeo17 yeo17dil hcp-mmp-b schaefer100-yeo17 
 # schaefer200-yeo17 schaefer400-yeo17 schaefer600-yeo17 schaefer800-yeo17 
-# schaefer1000-yeo17
-export atlasList="schaefer100-yeo17 schaefer200-yeo17 yeo17 yeo17dil"
+#
+# for example, for the schaefer 100, 200 and yeo-114 parcellation
+# the line would be --> 
+export atlasList="schaefer100-yeo17 schaefer200-yeo17 yeo17dil"
+
+# if you have a specific instal of python that you'd like to
+# point this script to (for example, if you have your own 
+# python install on a supercomputer account), uncomment
+# this line and set the variable 'py_bin' to that location
+# export py_bin=/custom/path/to/your/python
 
 ####################################################################
 ####################################################################
@@ -28,13 +48,14 @@ export atlasList="schaefer100-yeo17 schaefer200-yeo17 yeo17 yeo17dil"
 subj="my_subject"
 inputFSDir="/path/to/freesurfer/${subj}/"
 outputDir="/output/to/somwhere/${subj}/"
-mkdir -p ${outputDir}
+mkdir -p ${outputDir} || \
+   { echo "could not make dir" ; exit 0 ; } # safe-ish mkdir
 
 ####################################################################
 ####################################################################
 # go into the folder where we also want output and setup notes file!
 
-cd ${outputDir}
+cd ${outputDir} || { echo "could not cd" ; exit 0 ; } # safe-ish cd
 OUT="maTT2_notes.txt"
 touch $OUT
 
@@ -47,17 +68,10 @@ touch $OUT
 # -o          outputDir ---> output directory, will also write temporary 
 # -f          fsVersion ---> freeSurfer version (5p3 or 6p0)
 
-############
-# REMINDER #
-############
-
-# for maTT2 to function, download the .gcs files from: 
-# https://doi.org/10.6084/m9.figshare.5998583.v1 
-# and put these files into the respective 
-# /atlas_data/{atlas}/ folders
-
+# start the timer! 
 start=`date +%s`
 
+# run it
 cmd="${scriptBaseDir}/src/maTT2_applyGCS.sh \
         -d ${inputFSDir} \
         -o ${outputDir} \
