@@ -80,18 +80,22 @@ Chicago
   * shen (200 + 14 subcort nodes)
     * > Shen, X., Tokoglu, F., Papademetris, X., & Constable, R. T. (2013). Groupwise whole-brain parcellation from resting-state fMRI data for network node identification. Neuroimage, 82, 403-415.
 
-## Notes
+## Notes / FAQ
 
-Useful reading for considering what parcellation to use:
-> Zalesky, A., Fornito, A., Harding, I. H., Cocchi, L., Yücel, M., Pantelis, C., & Bullmore, E. T. (2010). Whole-brain anatomical networks: does the choice of nodes matter?. Neuroimage, 50(3), 970-983.
+* Useful reading for considering what parcellation to use:
+  > Zalesky, A., Fornito, A., Harding, I. H., Cocchi, L., Yücel, M., Pantelis, C., & Bullmore, E. T. (2010). Whole-brain anatomical networks: does the choice of nodes matter?. Neuroimage, 50(3), 970-983.
+  
+  > de Reus, M. A., & Van den Heuvel, M. P. (2013). The parcellation-based connectome: limitations and extensions. Neuroimage, 80, 397-404.
+  
+  > Arslan, S., Ktena, S. I., Makropoulos, A., Robinson, E. C., Rueckert, D., & Parisot, S. (2017). Human brain mapping: a systematic comparison of parcellation methods for the human cerebral cortex. NeuroImage.
 
-> de Reus, M. A., & Van den Heuvel, M. P. (2013). The parcellation-based connectome: limitations and extensions. Neuroimage, 80, 397-404.
+* The atlases here are not a comprehensive set of the parcellations used in neuroimaging. If you would like to see another parcellation (in fsaverage space) supported here, feel free to post an issue/pull request! 
 
-> Arslan, S., Ktena, S. I., Makropoulos, A., Robinson, E. C., Rueckert, D., & Parisot, S. (2017). Human brain mapping: a systematic comparison of parcellation methods for the human cerebral cortex. NeuroImage.
+* Fitting a parcellation in the manner used here is not the only method for fitting parcellations to neuroimage data. While these tools warp an 'average' brain to each subject, some methods compute individualized parcellations based on subject-level data. 
 
-Note that the atlases here are not a comprehensive set of the parcellations used in neuroimaging. If you would like to see another parcellation (in fsaverage space) supported here, feel free to post an issue/pull request! 
+* The gcs label training script uses surfaces fit with the original maTT functionality, to produce the maTT2 files. These surface annotations were not manually edited, like what was done for the [Mindboggle-101](https://mindboggle.info/data.html).  
 
-Also note that fitting a parcellation in the manner used here is not the only method for fitting parcellations to neuroimage data. While these tools warp an 'average' brain to each subject, some methods compute individualized parcellations based on subject-level data. 
+* _How are these methods different than using a parcellation in a standard volume space (say, MNI)?_ Using these tools, you'll recover a parcellation in the T1w space. This parcellation will use FreeSurfer's surface-based functions to render this parcellation in this space. As a result, you'll get a parcellation that follows the individual's cortical ribbon (assuming it was segmented well with FreeSurfer). Therefore, you can use the output atlases to measure parcellation-based info in the native space, avoiding a non-linear warp of the info to a common space. 
 
 Checkout the [Brainlife.io](https://brainlife.io/) version of this tool [here](https://github.com/faskowit/app-multiAtlasTT).
 
