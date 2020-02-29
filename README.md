@@ -5,7 +5,7 @@ Given a completed FreeSurfer _recon-all_ directory, these scripts can transfer a
 
 This project is in *beta*; work is ongoing. Please feel free to comment via issue/pull request.
 
-#### maTT2 update (_recommended_) 
+#### maTT2 update (_recommended_)
 We have now added functionality to use FreeSurfer [Gaussian classifier surface atlas](https://surfer.nmr.mgh.harvard.edu/fswiki/SurfaceLabelAtlas) (.gcs) files to label individual subjects. These files are large, so they are hosted in a Figshare repository here: https://doi.org/10.6084/m9.figshare.5998583.
 
 The gcs files were created by running the Mindboggle 101 brains (http://dx.doi.org/10.7910/DVN/HMQKCK) through FreeSurfer _recon-all_ (versions 5.3 and 6.0) and creating individually labeled atlases using the maTT functionality. For each atlas, we created a Gaussian classifer surface atlas using the 101 Mindboggle subjects. We have provided an example script for this creation process (``maTT2_caLabelTrain_example.sh``). We have also trained Gaussian classifier surface atlases using the HCP unrelated 100 subjects; these can be found here: https://doi.org/10.6084/m9.figshare.7552853. 
@@ -14,7 +14,7 @@ An advantage of using the maTT2 functionality is that it takes much less time. A
 
 ![just_a_fun_pic](./atlas_data/sch200_rand.png)
 
-## Prerequities
+## Prerequisites
 
 * [FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki)
 * [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki)
