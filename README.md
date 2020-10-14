@@ -8,7 +8,7 @@ This project is in *beta*; work is ongoing. Please feel free to comment via issu
 #### maTT2 update (_recommended_)
 We have now added functionality to use FreeSurfer [Gaussian classifier surface atlas](https://surfer.nmr.mgh.harvard.edu/fswiki/SurfaceLabelAtlas) (.gcs) files to label individual subjects. These files are large, so they are hosted in a Figshare repository here: https://doi.org/10.6084/m9.figshare.5998583.
 
-The gcs files were created by running the Mindboggle 101 brains (http://dx.doi.org/10.7910/DVN/HMQKCK) through FreeSurfer _recon-all_ (versions 5.3 and 6.0) and creating individually labeled atlases using the maTT functionality. For each atlas, we created a Gaussian classifer surface atlas using the 101 Mindboggle subjects. We have provided an example script for this creation process (``maTT2_caLabelTrain_example.sh``). We have also trained Gaussian classifier surface atlases using the HCP unrelated 100 subjects; these can be found here: https://doi.org/10.6084/m9.figshare.7552853. 
+The gcs files were created by running the Mindboggle 101 brains (http://dx.doi.org/10.7910/DVN/HMQKCK) through FreeSurfer _recon-all_ (versions 5.3, 6.0, and 7.1) and creating individually labeled atlases using the maTT functionality. For each atlas, we created a Gaussian classifer surface atlas using the 101 Mindboggle subjects. We have provided an example script for this creation process (``maTT2_caLabelTrain_example.sh``). We have also trained Gaussian classifier surface atlases using the HCP unrelated 100 subjects; these can be found here: https://doi.org/10.6084/m9.figshare.7552853. 
 
 An advantage of using the maTT2 functionality is that it takes much less time. Additionally, the maTT2-derived atlases seem to contain smoother borders between parcellated regions. 
 
@@ -37,17 +37,25 @@ The LUT (look up table) files will let you know the names of the cortical labels
 
 Sometimes, parcellation regions on the surface atlas might be so small, that they don't render in the output volume. In this case, the indicies of the outputs will still correspond to the LUT (in other words, the indices should not be shifted!). Be aware that this could happen and adjust downstream analysis code accordingly please. 
 
+Overall, please carefully check the output of these tools to make sure that there aren't any data discrpancies and that you can correctly identify which label is which. These tools are provided for your convienice, but the quality of their output cannot be guarenteed. Please also note that the method for fitting these parcellations uses information from FreeSurfer's surface warp; however, some of these parcellations were originally fit via diffent means. Please do consider how this could affect your downstream analysis. 
+
 ## Data Sources
 
-* [gordon333](https://mail.nmr.mgh.harvard.edu/pipermail//freesurfer/2017-April/051470.html) & gordon333dil (333 nodes + 14 subcort nodes)
+_Note: for all atlases, only cortical areas are fit with the surface warp. The additional 14 subcortical areas are from FreeSurfer's segmentation_
+
+* [aicha](https://www.gin.cnrs.fr/en/tools/aicha/) (345 cortical nodes + 14 subcort nodes)
+  * > Joliot, M., Jobard, G., Naveau, M., Delcroix, N., Petit, L., Zago, L., ... & Tzourio-Mazoyer, N. (2015). AICHA: An atlas of intrinsic connectivity of homotopic areas. Journal of neuroscience methods, 254, 46-59.
+  * The original volmetric atlas in MNI space was projected for fsaverage using the CBIG's lab's [registration fusion](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/registration/Wu2017_RegistrationFusion)
+  * This is not the complete aicha atlas, as it is missing cortical areas. 
+  
+* [gordon333dil](https://mail.nmr.mgh.harvard.edu/pipermail//freesurfer/2017-April/051470.html) (333 nodes + 14 subcort nodes)
   * > Gordon, E. M., Laumann, T. O., Adeyemo, B., Huckins, J. F., Kelley, W. M., & Petersen, S. E. (2014). Generation and evaluation of a cortical area parcellation from resting-state correlations. Cerebral cortex, 26(1), 288-303.
 Chicago	
-  * gordon333dil is a version of the gordon atlas without gaps between the labels; was created by using the [dilateParcellation](https://github.com/faskowit/dilateParcellation) tool. It has two less regions than the gordon333, as it is missing '???' for the left and right sides
-  * **note**: due to a since fixed parallelization error, results using gordon333's .gca (the maTT2 workflow) will be missing region no. 333 (rh.R_Auditory_24.label). The cortical real estate originally occuplied by this region will be described by other node areas near this original region in the maTT2 outputs. Thus, using the maTT2 workflow with the MindBoggle trained .gca files will render a parcellation with 332 cortical nodes and 14 subcortical nodes. 
+  * gordon333dil is a version of the gordon atlas without gaps between the labels; was created by using the [dilateParcellation](https://github.com/faskowit/dilateParcellation) tool.
+  
 * [hcp-mmp](https://figshare.com/articles/HCP-MMP1_0_projected_on_fsaverage/3498446) & hcp-mmp-b (360 nodes + 14 subcort nodes)
   * > Glasser, M. F., Coalson, T. S., Robinson, E. C., Hacker, C. D., Harwell, J., Yacoub, E., ... & Smith, S. M. (2016). A multi-modal parcellation of human cerebral cortex. Nature, 536(7615), 171-178.
   * <sup>2</sup>
-  * hcp-mmp is a version of the HCP-MMP1.0 atlas derrived from data kindly provided on [figShare](https://figshare.com/articles/HCP-MMP1_0_projected_on_fsaverage/3498446). Details about how these annotation files were created can be found at that repository.
   * hcp-mmp-b is a version of the HCP-MMP1.0 atlas converted from the [BALSA database](https://balsa.wustl.edu/study/show/RVVG)
   (file: Q1-Q6_RelatedValidation210.CorticalAreas_dil_Final_Final_Areas_Group_Colors.32k_fs_LR.dlabel.nii) using the [fsLR_2_fsaverage_4_labels](https://github.com/faskowit/fsLR_2_fsaverage_4_labels) tool. This tool follows the recommendations found [here](https://wiki.humanconnectome.org/display/PublicData/HCP+Users+FAQ#HCPUsersFAQ-9.HowdoImapdatabetweenFreeSurferandHCP?) using the [8may2017](http://brainvis.wustl.edu/workbench/standard_mesh_atlases_8may2017.zip) data. _Note_: this hcp-mmp-b atlas does not have '???' regions for the left and right hemis, wheresas the hcp-mmp atlas does. This affects the final node label indices in the rmap files. Also, the color LUT of the hcp-mmp-b is slightly different.
  
@@ -55,24 +63,31 @@ Chicago
   * > Whitaker, K. J., Vértes, P. E., Romero-Garcia, R., Váša, F., Moutoussis, M., Prabhu, G., ... & Tait, R. (2016). Adolescence is associated with genomically patterned consolidation of the hubs of the human brain connectome. Proceedings of the National Academy of Sciences, 113(32), 9105-9110.
   * > Romero-Garcia, R., Atienza, M., Clemmensen, L. H., & Cantero, J. L. (2012). Effects of network resolution on topological properties of human neocortex. Neuroimage, 59(4), 3522-3532.
 
-* [schaefer*-yeo17](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal) (100, 200, 400, 600, 800, 1000 nodes + 14 subcort nodes)
+* [schaefer*-yeo17](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal) (100, 200, 300, 400, 500 + 14 subcort nodes)
   * > Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2017). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity mri. Cerebral Cortex, 1-20.
   
-* [yeo17](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Yeo2011_fcMRI_clustering) & yeo17dil (114 nodes + 14 subcort nodes)
+* [shen268](https://www.nitrc.org/frs/?group_id=51) (235 nodes + 14 subcort)
+  * > Finn, E. S., Shen, X., Scheinost, D., Rosenberg, M. D., Huang, J., Chun, M. M., ... & Constable, R. T. (2015). Functional connectome fingerprinting: identifying individuals using patterns of brain connectivity. Nature neuroscience, 18(11), 1664-1671.
+  * > Shen, X., Papademetris, X., & Constable, R. T. (2010). Graph-theory based parcellation of functional subunits in the brain from resting-state fMRI data. Neuroimage, 50(3), 1027-1035.
+  * The original volmetric atlas in MNI space was projected for fsaverage using the CBIG's lab's [registration fusion](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/registration/Wu2017_RegistrationFusion). This is why there are not 268 nodes, as in the original MNI atlas.
+
+  
+* [yeo17dil](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Yeo2011_fcMRI_clustering) & yeo17dil (114 nodes + 14 subcort nodes)
   * > Yeo BT, Krienen FM, Sepulcre J, Sabuncu MR, Lashkari D, Hollinshead M, Roffman JL, Smoller JW, Zollei L., Polimeni JR, Fischl B, Liu H, Buckner RL. The organization of the human cerebral cortex estimated by intrinsic functional connectivity. Journal of Neurophysiology 106(3):1125-1165, 2011.
   * > Krienen FM, Yeo BTT, Buckner RL. Reconfigurable state-dependent functional coupling modes cluster around a core functional architecture. Philosophical Transactions of the Royal Society B, 369:20130526, 2014.
   * > Yeo BTT, Tandi J, Chee MWL. Functional connectivity during rested wakefulness predicts vulnerability to sleep deprivation. Neuroimage 111:147-158, 2015.
   * > Zuo, X.N., et al. An open science resource for establishing reliability and reproducibility in functional connectomics, Sci data, 1:140049, 2014.
   * yeo17dil is a version of the yeo17 split-label atlas without gaps between the labels; was created by using the [dilateParcellation](https://github.com/faskowit/dilateParcellation) tool
   * <sup>3</sup>
+  
 * Added data from [Arslan et. al 2017 Box](https://imperialcollegelondon.app.box.com/s/g5q0kyvpqdha5jgofhmiov9ws1ao0hi0/)  (*note: experimental*) 
   * We transformed the Arslan data, which is fs_LR 32k space, to fsaverage space, and then made .annot files in this space. For these data, we created arbitrary parcel names and LUT files. The LUT files here seem to have some weirdness in them regarding hemisphere assignments. Thus, these atlases are provided as a means to slice up the cortex. The names and correspondences of the LUT should be determined independently; *not* based on the LUT files provided here. 
-  * arslan_res* (150, 250, 347 + 14 subcort nodes)
+  * aal (82 + 14 subcort nodes)
+    * > Rolls, E. T., Joliot, M., & Tzourio-Mazoyer, N. (2015). Implementation of a new parcellation of the orbitofrontal cortex in the automated anatomical labeling atlas. Neuroimage, 122, 1-5.
+  * arslan (50 + 14 subcort nodes)
     * > Arslan, S., & Rueckert, D. (2015, October). Multi-level parcellation of the cerebral cortex using resting-state fMRI. In International Conference on Medical Image Computing and Computer-Assisted Intervention (pp. 47-54). Springer, Cham.
   * baldassano (172 + 14 subcort nodes)
     * > Baldassano, C., Beck, D. M., & Fei-Fei, L. (2015). Parcellating connectivity in spatial maps. PeerJ, 3, e784.
-  * fan (210 + 14 subcort nodes)
-    * > Fan, L., Li, H., Zhuo, J., Zhang, Y., Wang, J., Chen, L., ... & Fox, P. T. (2016). The human brainnetome atlas: a new brain atlas based on connectional architecture. Cerebral cortex, 26(8), 3508-3526.
   * ica (168 + 14 subcort nodes)
     * > Beckmann, C. F., & Smith, S. M. (2004). Probabilistic independent component analysis for functional magnetic resonance imaging. IEEE transactions on medical imaging, 23(2), 137-152.
   * power (130 + 14 subcort nodes)
