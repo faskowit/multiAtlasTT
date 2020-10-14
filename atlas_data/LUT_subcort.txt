@@ -1,0 +1,14 @@
+10 Left-Thalamus-Proper
+11 Left-Caudate 
+12 Left-Putamen
+13 Left-Pallidum 
+17 Left-Hippocampus
+18 Left-Amygdala
+26 Left-Accumbens-area
+49 Right-Thalamus-Proper
+50 Right-Caudate 
+51 Right-Putamen
+52 Right-Pallidum 
+53 Right-Hippocampus
+54 Right-Amygdala
+58 Right-Accumbens-area
