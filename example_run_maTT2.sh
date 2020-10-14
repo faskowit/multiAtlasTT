@@ -28,8 +28,9 @@ export atlasBaseDir=${PWD}/atlas_data/
 export scriptBaseDir=${PWD}/
 
 # make a list from these options: 
-# nspn500 gordon333 yeo17 yeo17dil hcp-mmp-b schaefer100-yeo17 
-# schaefer200-yeo17 schaefer400-yeo17 schaefer600-yeo17 schaefer800-yeo17 
+# aal aicha arslan baldassano gordon333dil hcp-mmp-b ica nspn500 power 
+# schaefer100-yeo17 schaefer200-yeo17 schaefer300-yeo17 schaefer400-yeo17 
+# schaefer500-yeo17 shen268cort yeo17dil
 #
 # for example, for the schaefer 100, 200 and yeo-114 parcellation
 # the line would be --> 
@@ -66,7 +67,9 @@ touch $OUT
 # script inputs:
 # -d          inputFSDir --> input freesurfer directory
 # -o          outputDir ---> output directory, will also write temporary 
-# -f          fsVersion ---> freeSurfer version (5p3 or 6p0)
+# -f          fsVersion ---> freeSurfer version (5p3 or 6p0 and 7p1)
+# -s 		  doStats -----> flag for doing stats on parcellation; takes a while
+# 							 but gives you information about vol and coordinate
 
 # start the timer! 
 start=`date +%s`
@@ -75,7 +78,7 @@ start=`date +%s`
 cmd="${scriptBaseDir}/src/maTT2_applyGCS.sh \
         -d ${inputFSDir} \
         -o ${outputDir} \
-        -f 5p3 \
+        -f 6p0 \
     "
 echo $cmd 
 eval $cmd | tee -a ${OUT}

@@ -41,7 +41,10 @@ cat <<helpusagetext
 USAGE: ${0} 
         -d          inputFSDir --> input freesurfer directory
         -o          outputDir ---> output directory, will also write temporary 
-        -f          fsVersion ---> freeSurfer version (5p3 or 6p0)
+        -f          fsVersion ---> freeSurfer version (5p3 or 6p0 or 7p1)
+        -s          doStats -----> flag for doing stats on parcellation; takes 
+                                   a while but gives you information about vol 
+                                   and coordinate
 helpusagetext
 }
 
@@ -52,7 +55,8 @@ cat <<usagetext
 USAGE: ${0} 
         -d          inputFSDir 
         -o          outputDir
-        -f          fsVersion (5p3 or 6p0)
+        -f          fsVersion (5p3 or 6p0 or 7p1)
+        -s          flag to enable parc stats 
 usagetext
 }
 
@@ -76,8 +80,10 @@ if [ $NUMARGS -lt 3 ]; then
 	exit 1
 fi
 
+doStats="false"
+
 # read in args
-while getopts "a:b:c:d:e:f:g:hi:j:k:l:m:n:o:p:q:s:r:t:u:v:w:x:y:z:" OPTION
+while getopts "d:o:f:sh" OPTION
 do
      case $OPTION in
 		d)
@@ -89,10 +95,16 @@ do
         f)
             fsVersion=$OPTARG
             ;;
+        s)
+            doStats="true" ; echo "will run stats"
+            ;;
 		h) 
 			help_usage >&2
             exit 1
       		;;
+        :)
+            echo "Invalid option: $OPTARG requires an argument" 1>&2
+            ;;
 		?) # getopts issues an error message
 			usage >&2
             exit 1
@@ -126,11 +138,12 @@ then
 fi
 
 # add check for fsVersion
-if [[ ${fsVersion} != '5p3' ]] && \
-    [[ ${fsVersion} != '6p0' ]] 
+if [[ ${fsVersion} != '6p0' ]] && \
+    [[ ${fsVersion} != '7p1' ]] && \
+    [[ ${fsVersion} != '5p3' ]] 
 then
     echo "fsVersion must be set and must be either:"
-    echo "5p3 or 6p0"
+    echo "5p3 or 6p0 or 7p1"
     exit 1
 fi
 
@@ -536,57 +549,61 @@ do
 
 done
 
-for atlas in ${atlasList}
-do
+# make this an option... because it takes so long
+if [[ doStats = "true" ]] ; then
 
-    atlasOutputDir=${outputDir}/${atlas}/
-
-    if [[ -e ${atlasOutputDir}/${atlas}_coords_mm.csv ]] ; then
-        echo "already did stats"
-        continue
-    fi
-
-    ################################################################
-    # make some stats!!
-
-    # make_annot_stats()
-    # annot=$1 # a path to a file
-    # inFsDir=$2 # path to a dir
-    # inHemi=$3 # string 
-    # outDir=$4 # path to a dir
-    # annotName=$5 # string
-    for hh in lh rh 
+    for atlas in ${atlasList}
     do
 
-        make_annot_stats \
-            ${atlasOutputDir}/${hh}.${atlas}.annot \
-            ${tempFSSubj} \
-            ${hh} \
+        atlasOutputDir=${outputDir}/${atlas}/
+
+        if [[ -e ${atlasOutputDir}/${atlas}_coords_mm.csv ]] ; then
+            echo "already did stats"
+            continue
+        fi
+
+        ################################################################
+        # make some stats!!
+
+        # make_annot_stats()
+        # annot=$1 # a path to a file
+        # inFsDir=$2 # path to a dir
+        # inHemi=$3 # string 
+        # outDir=$4 # path to a dir
+        # annotName=$5 # string
+        for hh in lh rh 
+        do
+
+            make_annot_stats \
+                ${atlasOutputDir}/${hh}.${atlas}.annot \
+                ${tempFSSubj} \
+                ${hh} \
+                ${atlasOutputDir}/ \
+                ${atlas} 
+        done
+
+        # make_seg_stats()
+        # inSeg=$1 # path to nifti
+        # outDir=$2 # path to a dir
+        # annotName=$3 # string
+        make_seg_stats \
+            ${atlasOutputDir}/${atlas}_rmap.nii.gz \
             ${atlasOutputDir}/ \
-            ${atlas} 
+            ${atlas}
+
+        # make_seg_coords()
+        # inputVol=$1
+        # inputMask=$2
+        # outputDir=$3
+        # annotName=$4
+        make_seg_coords \
+            ${atlasOutputDir}/${atlas}_rmap.nii.gz \
+            ${outputDir}/${subj}_both_mask.nii.gz \
+            ${atlasOutputDir}/ \
+            ${atlas}
+
     done
-
-    # make_seg_stats()
-    # inSeg=$1 # path to nifti
-    # outDir=$2 # path to a dir
-    # annotName=$3 # string
-    make_seg_stats \
-        ${atlasOutputDir}/${atlas}_rmap.nii.gz \
-        ${atlasOutputDir}/ \
-        ${atlas}
-
-    # make_seg_coords()
-    # inputVol=$1
-    # inputMask=$2
-    # outputDir=$3
-    # annotName=$4
-    make_seg_coords \
-        ${atlasOutputDir}/${atlas}_rmap.nii.gz \
-        ${outputDir}/${subj}_both_mask.nii.gz \
-        ${atlasOutputDir}/ \
-        ${atlas}
-
-done
+fi # if doStats
 
 # delete extra stuff
 # the temp fsDirectory we setup at very beginning

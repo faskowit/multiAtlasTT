@@ -340,6 +340,14 @@ do
         continue
     fi
 
+    # if atlas already exists
+    if [[ -e ${atlasOutputDir}/${atlas}.nii.gz ]]
+    then
+        echo "looks like already made: ${atlasOutputDir}/${atlas}.nii.gz"
+        echo "will skip, but could indicate problem with python, do be careful"
+        continue
+    fi
+
     # first, link the atlas we currently looking at to the fsavergae
     ln -s ${atlasBaseDir}/${atlas}/lh.${atlas}.annot ${fsAvg}/label/lh.${atlas}.annot
     ln -s ${atlasBaseDir}/${atlas}/rh.${atlas}.annot ${fsAvg}/label/rh.${atlas}.annot
