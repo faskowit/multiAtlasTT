@@ -19,8 +19,8 @@ An advantage of using the maTT2 functionality is that it takes much less time. A
 * [FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki)
 * [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/fswiki)
 * [easy_lausanne](https://github.com/mattcieslak/easy_lausanne) (optional, but good to have)
-  * meaning you have nibabel and numpy too
   * Also, easy_lausanne is a great tool that you should check out!
+* python3 with [nibabel](https://nipy.org/nibabel/). If you need to point to a specific python executable (as might be case on shared grid computing), you can `export py_bin=/your/path/to/python` in the bash script.
 * Unix environment to run scripts on (developed on Ubuntu 16.04)
 
 ## Usage
@@ -35,9 +35,9 @@ After program completion, the resultant file of interest will be called ``${atla
 
 The LUT (look up table) files will let you know the names of the cortical labels (but remember the extra 14 at the end, which correspond to [these regions](./atlas_data/LUT_subcort.txt) which are extracted from the FreeSurfer segmentation). For example, see the LUT for the Schaefer100 [here](./atlas_data/schaefer100-yeo17/LUT_schaefer100-yeo17.txt) or for the hcp-mmp [here](./atlas_data/hcp-mmp-b/LUT_hcp-mmp-b.txt). Please pay attention to the regions labeled stuff like `*unknown*` or `*???*` in the LUT. These regions will likely be in your ``${atlas}/${atlas}_rmap.nii.gz`` ... but you probably want to ignore them for analysis. 
 
-Sometimes, parcellation regions on the surface atlas might be so small, that they don't render in the output volume. In this case, the indicies of the outputs will still correspond to the LUT (in other words, the indices should not be shifted!). Be aware that this could happen and adjust downstream analysis code accordingly please. 
+Sometimes, parcellation regions on the surface atlas might be so small, that they don't render in the output volume. In this case, the indices of the outputs will still correspond to the LUT (in other words, the indices should not be shifted!). Be aware that this could happen and adjust downstream analysis code accordingly please. 
 
-Overall, please carefully check the output of these tools to make sure that there aren't any data discrpancies and that you can correctly identify which label is which. These tools are provided for your convienice, but the quality of their output cannot be guarenteed. Please also note that the method for fitting these parcellations uses information from FreeSurfer's surface warp; however, some of these parcellations were originally fit via diffent means. Please do consider how this could affect your downstream analysis. 
+Overall, please carefully check the output of these tools to make sure that there aren't any data discrepancies and that you can correctly identify which label is which. These tools are provided for your convenience, but the quality of their output cannot be guaranteed. Please also note that the method for fitting these parcellations uses information from FreeSurfer's surface warp; however, some of these parcellations were originally fit via different means. Please do consider how this could affect your downstream analysis. 
 
 ## Data Sources
 
@@ -45,8 +45,8 @@ _Note: for all atlases, only cortical areas are fit with the surface warp. The a
 
 * [aicha](https://www.gin.cnrs.fr/en/tools/aicha/) (345 cortical nodes + 14 subcort nodes)
   * > Joliot, M., Jobard, G., Naveau, M., Delcroix, N., Petit, L., Zago, L., ... & Tzourio-Mazoyer, N. (2015). AICHA: An atlas of intrinsic connectivity of homotopic areas. Journal of neuroscience methods, 254, 46-59.
-  * The original volmetric atlas in MNI space was projected for fsaverage using the CBIG's lab's [registration fusion](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/registration/Wu2017_RegistrationFusion)
-  * This is not the complete aicha atlas, as it is missing cortical areas. 
+  * The original volmetric atlas in MNI space was projected for fsaverage using the CBIG lab's [registration fusion](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/registration/Wu2017_RegistrationFusion)
+  * This is not the complete aicha atlas, as it is missing subcortical areas defined by that atlas. The subcort here are from FreeSurfer (as is the case with all these parcellations). 
  
 * [baldassano](https://www.dpmlab.org/pubs.html) (170 + 14 subcort nodes)
   * > Baldassano, C., Beck, D. M., & Fei-Fei, L. (2015). Parcellating connectivity in spatial maps. PeerJ, 3, e784.
@@ -76,7 +76,7 @@ Chicago
   * The original volmetric atlas in MNI space was projected for fsaverage using the CBIG's lab's [registration fusion](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/registration/Wu2017_RegistrationFusion). This is why there are not 268 nodes, as in the original MNI atlas.
 
   
-* [yeo17dil](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Yeo2011_fcMRI_clustering) & yeo17dil (114 nodes + 14 subcort nodes)
+* [yeo17dil](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Yeo2011_fcMRI_clustering) (114 nodes + 14 subcort nodes)
   * > Yeo BT, Krienen FM, Sepulcre J, Sabuncu MR, Lashkari D, Hollinshead M, Roffman JL, Smoller JW, Zollei L., Polimeni JR, Fischl B, Liu H, Buckner RL. The organization of the human cerebral cortex estimated by intrinsic functional connectivity. Journal of Neurophysiology 106(3):1125-1165, 2011.
   * > Krienen FM, Yeo BTT, Buckner RL. Reconfigurable state-dependent functional coupling modes cluster around a core functional architecture. Philosophical Transactions of the Royal Society B, 369:20130526, 2014.
   * > Yeo BTT, Tandi J, Chee MWL. Functional connectivity during rested wakefulness predicts vulnerability to sleep deprivation. Neuroimage 111:147-158, 2015.
