@@ -27,7 +27,7 @@ An advantage of using the maTT2 functionality is that it takes much less time. A
 
 See ``example_run_maTT.sh`` for modifiable example scipt to run maTT. 
 
-See ``example_run_maTT2.sh`` for modifiable example script to run maTT2, which uses gcs files that need to be downloaded from the accompanying [figshare repository](https://doi.org/10.6084/m9.figshare.5998583.v1). 
+See ``example_run_maTT2.sh`` for modifiable example script to run maTT2, which uses gcs files that need to be downloaded from the accompanying [figshare repository](https://doi.org/10.6084/m9.figshare.5998583). 
 
 ## What do these scripts output?
 
