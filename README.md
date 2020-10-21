@@ -103,6 +103,8 @@ Chicago
   > de Reus, M. A., & Van den Heuvel, M. P. (2013). The parcellation-based connectome: limitations and extensions. Neuroimage, 80, 397-404.
   
   > Arslan, S., Ktena, S. I., Makropoulos, A., Robinson, E. C., Rueckert, D., & Parisot, S. (2017). Human brain mapping: a systematic comparison of parcellation methods for the human cerebral cortex. NeuroImage.
+  
+  > Messé, A. (2020). Parcellation influence on the connectivity‐based structure–function relationship in the human brain. Human Brain Mapping, 41(5), 1167-1180.
 
 * The atlases here are not a comprehensive set of the parcellations used in neuroimaging. If you would like to see another parcellation (in fsaverage space) supported here, feel free to post an issue/pull request! 
 
