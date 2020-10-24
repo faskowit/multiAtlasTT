@@ -43,7 +43,7 @@ Overall, please carefully check the output of these tools to make sure that ther
 
 _Note: for all atlases, only cortical areas are fit with the surface warp. The additional 14 subcortical areas are from FreeSurfer's segmentation_
 
-* [aicha](https://www.gin.cnrs.fr/en/tools/aicha/) (345 cortical nodes + 14 subcort nodes)
+* [aicha](https://www.gin.cnrs.fr/en/tools/aicha/) (344 cortical nodes + 14 subcort nodes)
   * > Joliot, M., Jobard, G., Naveau, M., Delcroix, N., Petit, L., Zago, L., ... & Tzourio-Mazoyer, N. (2015). AICHA: An atlas of intrinsic connectivity of homotopic areas. Journal of neuroscience methods, 254, 46-59.
   * The original volmetric atlas in MNI space was projected for fsaverage using the CBIG lab's [registration fusion](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/registration/Wu2017_RegistrationFusion)
   * This is not the complete aicha atlas, as it is missing subcortical areas defined by that atlas. The subcort here are from FreeSurfer (as is the case with all these parcellations). 
