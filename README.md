@@ -29,7 +29,7 @@ See ``example_run_maTT.sh`` for modifiable example scipt to run maTT.
 
 See ``example_run_maTT2.sh`` for modifiable example script to run maTT2, which uses gcs files that need to be downloaded from the accompanying [figshare repository](https://doi.org/10.6084/m9.figshare.5998583). 
 
-## What do these scripts output?
+## What do these scripts output? + Some considerations! 
 
 After program completion, the resultant file of interest will be called ``${atlas}/${atlas}_rmap.nii.gz`` (rmap stands for re-mapped) which will contain the atlas labels 1:(num labels). 14 Subcortical labels will be added at the end. There will be a filed called ``${atlas}/${atlas}_rmap.nii.gz_remap.txt`` which described how the original label numbers from the FreeSurfer annotation<sup>4</sup> were mapped to this rmap nifti file. 
 
@@ -37,7 +37,7 @@ The LUT (look up table) files will let you know the names of the cortical labels
 
 Sometimes, parcellation regions on the surface atlas might be so small, that they don't render in the output volume. In this case, the indices of the outputs will still correspond to the LUT (in other words, the indices should not be shifted!). Be aware that this could happen and adjust downstream analysis code accordingly please. 
 
-Overall, please carefully check the output of these tools to make sure that there aren't any data discrepancies and that you can correctly identify which label is which. These tools are provided for your convenience, but the quality of their output cannot be guaranteed. Please also note that the method for fitting these parcellations uses information from FreeSurfer's surface warp; however, some of these parcellations were originally fit via different means. Please do consider how this could affect your downstream analysis. 
+Overall, please carefully check the output of these tools to make sure that there aren't any data discrepancies and that you can correctly identify which label is which. These tools are provided for your convenience, but the quality of their output cannot be guaranteed. Please also note that the method for fitting these parcellations uses information from FreeSurfer's surface warp; however, some of these parcellations were originally fit via different means. Please do consider how this could affect your downstream analysis. Overall, use at your own risk! These tools were built to allow easy access to numerous parcellations, at the expense of using a single fitting method (FreeSurfer's warp) for all parcellations.   
 
 ## Data Sources
 
