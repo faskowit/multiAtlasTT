@@ -1,9 +1,12 @@
 # multiAtlasTT (Beta)
 _Multi-Atlas Transfer Tools for Neuroimaging (maTT)_
 
+[![DOI](https://zenodo.org/badge/120029910.svg)](https://zenodo.org/badge/latestdoi/120029910)
+
+
 Given a completed FreeSurfer _recon-all_ directory, these scripts can transfer an atlas (.annot file; also called a 'parcellation') in fsaverage space to _**subject space**_, in both volume (nifti) and surface (.annot) format. Therefore, using these tools one can obtain multiple parcellations in the subject space<sup>5</sup> (in addition to the Desikan-Killiany and Destrieux parcellations that recon-all usually constructs<sup>1</sup>). The major part of the label transfer script was adapted from scripts written by the [CJNeuroLab](https://cjneurolab.org/2016/11/22/hcp-mmp1-0-volumetric-nifti-masks-in-native-structural-space/). The goal of these tools is to make fitting multiple atlases a piece of cake. Have fun! 
 
-This project is in *beta*; work is ongoing. Please feel free to comment via issue/pull request.
+This project is in *beta*; work is ongoing. Please feel free to comment via issue/pull request. If you use these tools in an academic work, you might consider [citing this repo](https://doi.org/10.5281/zenodo.4459737).
 
 #### maTT2 update (_recommended_)
 We have now added functionality to use FreeSurfer [Gaussian classifier surface atlas](https://surfer.nmr.mgh.harvard.edu/fswiki/SurfaceLabelAtlas) (.gcs) files to label individual subjects. These files are large, so they are hosted in a Figshare repository here: https://doi.org/10.6084/m9.figshare.5998583.
