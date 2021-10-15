@@ -51,10 +51,6 @@ _Note: for all atlases, only cortical areas are fit with the surface warp. The a
   * The original volmetric atlas in MNI space was projected for fsaverage using the CBIG lab's [registration fusion](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/registration/Wu2017_RegistrationFusion)
   * This is not the complete aicha atlas, as it is missing subcortical areas defined by that atlas. The subcort here are from FreeSurfer (as is the case with all these parcellations). 
  
-* [baldassano](https://www.dpmlab.org/pubs.html) (170 + 14 subcort nodes)
-  * > Baldassano, C., Beck, D. M., & Fei-Fei, L. (2015). Parcellating connectivity in spatial maps. PeerJ, 3, e784.
-  * Gii files were downloaded from the author's [website](https://www.dpmlab.org/pubs.html) and transferred to fsaverage space. Parcellations in the right hemisphere were accidentally named 'LH_region*'. 
-
 * [gordon333dil](https://mail.nmr.mgh.harvard.edu/pipermail//freesurfer/2017-April/051470.html) (333 nodes + 14 subcort nodes)
   * > Gordon, E. M., Laumann, T. O., Adeyemo, B., Huckins, J. F., Kelley, W. M., & Petersen, S. E. (2014). Generation and evaluation of a cortical area parcellation from resting-state correlations. Cerebral cortex, 26(1), 288-303.
 Chicago	
@@ -72,12 +68,6 @@ Chicago
 
 * [schaefer*-yeo17](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal) (100, 200, 300, 400, 500 + 14 subcort nodes)
   * > Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2017). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity mri. Cerebral Cortex, 1-20.
-  
-* [shen268](https://www.nitrc.org/frs/?group_id=51) (235 nodes + 14 subcort)
-  * > Finn, E. S., Shen, X., Scheinost, D., Rosenberg, M. D., Huang, J., Chun, M. M., ... & Constable, R. T. (2015). Functional connectome fingerprinting: identifying individuals using patterns of brain connectivity. Nature neuroscience, 18(11), 1664-1671.
-  * > Shen, X., Papademetris, X., & Constable, R. T. (2010). Graph-theory based parcellation of functional subunits in the brain from resting-state fMRI data. Neuroimage, 50(3), 1027-1035.
-  * The original volmetric atlas in MNI space was projected for fsaverage using the CBIG's lab's [registration fusion](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/registration/Wu2017_RegistrationFusion). This is why there are not 268 nodes, as in the original MNI atlas.
-
   
 * [yeo17dil](https://github.com/ThomasYeoLab/CBIG/tree/master/stable_projects/brain_parcellation/Yeo2011_fcMRI_clustering) (114 nodes + 14 subcort nodes)
   * > Yeo BT, Krienen FM, Sepulcre J, Sabuncu MR, Lashkari D, Hollinshead M, Roffman JL, Smoller JW, Zollei L., Polimeni JR, Fischl B, Liu H, Buckner RL. The organization of the human cerebral cortex estimated by intrinsic functional connectivity. Journal of Neurophysiology 106(3):1125-1165, 2011.
@@ -112,6 +102,8 @@ Chicago
 * The atlases here are not a comprehensive set of the parcellations used in neuroimaging. If you would like to see another parcellation (in fsaverage space) supported here, feel free to post an issue/pull request! 
 
 * Fitting a parcellation in the manner used here is not the only method for fitting parcellations to neuroimage data. While these tools warp an 'average' brain to each subject, some methods compute individualized parcellations based on subject-level data. 
+
+* Previously, this repository contained 'shen268cort' and 'baldassano' atlases with flawed data (my own error) that I projected to the surface. They have since been removed (nothing wrong with using the *real* atlases in your own work! They are wonderful and I urge you to check them out in their original format). Just a reminder (again), be sure to check the quality of the data when you use it, to make sure it looks as expected! Thanks! 
 
 * The gcs label training script uses surfaces fit with the original maTT functionality, to produce the maTT2 files. These surface annotations were not manually edited, like what was done for the [Mindboggle-101](https://mindboggle.info/data.html).  
 
