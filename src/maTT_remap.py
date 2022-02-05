@@ -20,7 +20,7 @@ def main():
     labs_file = str(argv[3])
 
     i_img = nib.load(i_file)
-    i_data = i_img.get_data()
+    i_data = np.array(i_img.dataobj)
 
     # get labs from first colum of LUT table
     labs = [x.split()[0] for x in open(labs_file).readlines()]  
