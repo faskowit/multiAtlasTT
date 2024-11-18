@@ -1,6 +1,8 @@
 # multiAtlasTT (Beta)
 _Multi-Atlas Transfer Tools for Neuroimaging (maTT)_
 
+🔴🔴🔴 FYI DORMANT CODE: I haven't updated these tools in a while and unless there is a major bug, I don't think I update these tools anymore. Since I've last taken a look at this code, FSL and FreeSurfer have had updates and new verisions. I'm not sure how these updates affect the functionality of these tools. If it still works for you (I think it should!), excellent. But please always check the data to make sure things are fit for your liking. I hope you get the parcellations you need! 🔴🔴🔴
+
 [![DOI](https://zenodo.org/badge/120029910.svg)](https://zenodo.org/badge/latestdoi/120029910)
 
 
